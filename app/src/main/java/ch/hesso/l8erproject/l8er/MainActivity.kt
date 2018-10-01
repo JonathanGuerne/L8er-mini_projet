@@ -1,4 +1,4 @@
-package ch.hesso.l8terproject.l8ter
+package ch.hesso.l8erproject.l8er
 
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
