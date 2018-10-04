@@ -6,11 +6,32 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/btnSms"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Send SMS"
-        android:textSize="28dp" />
+        android:orientation="vertical">
+
+
+        <Button
+            android:id="@+id/btnSms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Send SMS"
+            android:textSize="28dp" />
+
+        <TimePicker
+            android:id="@+id/timePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btnTmr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start timer"
+            android:textSize="28dp" />
+
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
