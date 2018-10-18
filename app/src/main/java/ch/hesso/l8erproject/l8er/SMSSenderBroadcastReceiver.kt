@@ -7,7 +7,7 @@ import android.util.Log
 import ch.hesso.l8erproject.l8er.tools.sendSMS
 
 
-class MyAlarm : BroadcastReceiver() {
+class SMSSenderBroadcastReceiver : BroadcastReceiver() {
 
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -17,7 +17,7 @@ class MyAlarm : BroadcastReceiver() {
             if (bundle != null) {
                 for (key in bundle!!.keySet()) {
                     val value = bundle!!.get(key)
-                    Log.d("MyAlarm", String.format("%s %s (%s)", key,
+                    Log.d("SMS-sender", String.format("%s %s (%s)", key,
                             value!!.toString(), value!!.javaClass.getName()))
                 }
             }

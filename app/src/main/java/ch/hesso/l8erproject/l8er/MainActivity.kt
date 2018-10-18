@@ -14,6 +14,8 @@ import android.support.v7.app.AppCompatActivity
 import android.telephony.SmsManager
 import android.util.Log
 import android.widget.Toast
+import ch.hesso.l8erproject.l8er.models.SMSModel
+import ch.hesso.l8erproject.l8er.tools.SMSDBHelper
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
@@ -26,10 +28,14 @@ class MainActivity : AppCompatActivity() {
 
     private val ServiceSmsSenderID = 0
 
+    lateinit var smsDBHelper : SMSDBHelper
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        smsDBHelper = SMSDBHelper(this)
 
         checkPermission()
 
@@ -56,6 +62,15 @@ class MainActivity : AppCompatActivity() {
             setAlarm(calendar.timeInMillis)
             
         }
+
+        var result = smsDBHelper.insertSMS(SMSModel(smsid = 0,
+                receiver = "tom",content = "je suis un con"))
+
+        var listSMS = smsDBHelper.readAllSMS()
+        listSMS.forEach {
+            Log.d("SQLiteHandler", "sms on db : " +
+                    "${it.receiver.toString()}, ${it.content.toString()}")
+        }
     }
 
     private fun checkPermission() {
@@ -75,7 +90,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setAlarm(time: Long) {
         val am = getSystemService(Context.ALARM_SERVICE)
-        val intent = Intent(this, MyAlarm::class.java)
+        val intent = Intent(this, SMSSenderBroadcastReceiver::class.java)
 
         val number = edtxtNumber.text.toString()
         val text_content = edtxtText.text.toString()
@@ -89,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 
         var tr = time - System.currentTimeMillis()
 
-        Log.d("MyAlarm", "Time remaining $tr")
+        Log.d("SMS-sender", "Time remaining $tr")
 
         if (am is AlarmManager) {
             am.set(AlarmManager.RTC, time, pIntent);
@@ -102,7 +117,7 @@ class MainActivity : AppCompatActivity() {
     private fun deleteAlarm() {
 
         val am: AlarmManager? = getSystemService(Context.ALARM_SERVICE) as? AlarmManager
-        val cancelIntent = Intent(this, MyAlarm::class.java)
+        val cancelIntent = Intent(this, SMSSenderBroadcastReceiver::class.java)
         val cancelPendingIntent = PendingIntent.getBroadcast(this, ServiceSmsSenderID, cancelIntent, 0)
 
         am!!.cancel(cancelPendingIntent)

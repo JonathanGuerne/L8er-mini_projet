@@ -106,7 +106,7 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
         return listSMS
     }
 
-    fun readAllUsers(): ArrayList<SMSModel> {
+    fun readAllSMS(): ArrayList<SMSModel> {
         val listSMS = ArrayList<SMSModel>()
         val db = writableDatabase
         var cursor: Cursor? = null

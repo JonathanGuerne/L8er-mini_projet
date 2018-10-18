@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name=".MyAlarm"
+            android:name=".SMSSenderBroadcastReceiver"
             android:enabled="true"
             android:exported="true" />
     </application>
