@@ -1,19 +1,20 @@
 package ch.hesso.l8erproject.l8er
 
-import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v7.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
 import android.Manifest
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
+import android.os.Bundle
 import android.provider.ContactsContract
+import android.support.v4.app.ActivityCompat
+import android.support.v7.app.AppCompatActivity
 import android.telephony.SmsManager
 import android.util.Log
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 
@@ -22,27 +23,21 @@ class MainActivity : AppCompatActivity() {
     private val RequestCodeSendSMS = 2
     private val RequestCodeReadContact = 3
 
+
+    private val ServiceSmsSenderID = 0
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        btnSms.setOnClickListener {
+        checkPermission()
 
-            val smsPerm = ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
-            val contactPerm = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
-
-
-            if (contactPerm != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_CONTACTS), RequestCodeReadContact)
-            }
-
-            if (smsPerm != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.SEND_SMS), RequestCodeSendSMS)
-            } else {
-                sendSMS()
-            }
+        btnCancel.setOnClickListener {
+            deleteAlarm()
         }
 
+        timePicker.setIs24HourView(true)
 
         btnTmr.setOnClickListener {
 
@@ -59,16 +54,37 @@ class MainActivity : AppCompatActivity() {
             }
 
             setAlarm(calendar.timeInMillis)
-
+            
         }
     }
 
+    private fun checkPermission() {
+
+        val smsPerm = ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
+        val contactPerm = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
+
+        if (contactPerm != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_CONTACTS), RequestCodeReadContact)
+        }
+
+        if (smsPerm != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.SEND_SMS), RequestCodeSendSMS)
+        }
+    }
+
+
     private fun setAlarm(time: Long) {
         val am = getSystemService(Context.ALARM_SERVICE)
-
         val intent = Intent(this, MyAlarm::class.java)
 
-        val pIntent = PendingIntent.getBroadcast(this, 0, intent, 0)
+        val number = edtxtNumber.text.toString()
+        val text_content = edtxtText.text.toString()
+
+        intent.putExtra("number", number)
+        intent.putExtra("text_content", text_content)
+
+        val pIntent = PendingIntent.getBroadcast(this, ServiceSmsSenderID, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT)
 
 
         var tr = time - System.currentTimeMillis()
@@ -76,37 +92,59 @@ class MainActivity : AppCompatActivity() {
         Log.d("MyAlarm", "Time remaining $tr")
 
         if (am is AlarmManager) {
-
-            am.setRepeating(AlarmManager.RTC, time, AlarmManager.INTERVAL_DAY, pIntent);
+            am.set(AlarmManager.RTC, time, pIntent);
             Toast.makeText(this, "Alarm is set", Toast.LENGTH_SHORT).show();
 
         }
     }
 
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == RequestCodeSendSMS) sendSMS()
+    private fun deleteAlarm() {
+
+        val am: AlarmManager? = getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+        val cancelIntent = Intent(this, MyAlarm::class.java)
+        val cancelPendingIntent = PendingIntent.getBroadcast(this, ServiceSmsSenderID, cancelIntent, 0)
+
+        am!!.cancel(cancelPendingIntent)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            RequestCodeSendSMS, RequestCodeReadContact -> if (grantResults.size > 0) {
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, R.string.permission_not_granted, Toast.LENGTH_SHORT).show()
+                    closeNow()
+                }
+            }
+        }
+    }
+
+    private fun closeNow() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            finishAffinity()
+        } else {
+            finish()
+        }
     }
 
     private fun sendSMS() {
-        var number = ""
+        var number = "0786656369"
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            val phones = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC")
-            while (phones!!.moveToNext()) {
-                val name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
-                val phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+        val phones = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                null, null, null,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC")
 
-                if (name.toLowerCase().equals("jonathan guerne")) {
-                    number = phoneNumber
-                    break;
-                }
+        while (phones!!.moveToNext()) {
+            val name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
+            val phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
 
+            if (name.toLowerCase().equals("jonathan guerne")) {
+                number = phoneNumber
+                break
             }
-            phones.close()
-        } else {
-            number = "0786656369"
         }
+        phones.close()
+
 
         val text = "SMS automatique depuis kotlin :D"
 
