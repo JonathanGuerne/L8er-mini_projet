@@ -63,14 +63,14 @@ class MainActivity : AppCompatActivity() {
             
         }
 
+        btnChangeView.setOnClickListener{
+            val intent = Intent(this,ListViewActivity::class.java)
+            startActivity(intent)
+        }
+
         var result = smsDBHelper.insertSMS(SMSModel(smsid = 0,
                 receiver = "tom",content = "je suis un con"))
 
-        var listSMS = smsDBHelper.readAllSMS()
-        listSMS.forEach {
-            Log.d("SQLiteHandler", "sms on db : " +
-                    "${it.receiver.toString()}, ${it.content.toString()}")
-        }
     }
 
     private fun checkPermission() {
