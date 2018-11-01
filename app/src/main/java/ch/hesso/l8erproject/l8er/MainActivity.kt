@@ -37,6 +37,9 @@ class MainActivity : AppCompatActivity() {
 
         smsDBHelper = SMSDBHelper(this)
 
+        //use this line to "reboot" the db. CAUTION this will earse all the content
+        //smsDBHelper.onUpgrade(smsDBHelper.writableDatabase,0,1)
+
         checkPermission()
 
         btnCancel.setOnClickListener {
@@ -94,6 +97,7 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra("number", number)
         intent.putExtra("text_content", text_content)
 
+
         val pIntent = PendingIntent.getBroadcast(this, ServiceSmsSenderID, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -109,8 +113,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        if (_number.isNullOrEmpty()){
-            smsDBHelper.insertSMS(SMSModel(smsDBHelper.getLastId(), number, text_content, time))
+        if (_number.equals("")){
+            Log.d("SavingSMS","new sms saved to db")
+            smsDBHelper.insertSMS(SMSModel(smsDBHelper.getLastId() + 1, number, text_content, time))
         }
     }
 
@@ -138,7 +143,7 @@ class MainActivity : AppCompatActivity() {
     private fun keepOldSmsWorkingOnStart() {
         var listSMS = smsDBHelper.readAllSMS()
         listSMS.forEach {
-            Log.d("lol", it.date.toString() + "" + it.receiver + " " + it.content)
+            Log.d("RestartedSMS", it.date.toString() + "" + it.receiver + " " + it.content)
             setAlarm(it.date, it.receiver, it.content)
         }
     }

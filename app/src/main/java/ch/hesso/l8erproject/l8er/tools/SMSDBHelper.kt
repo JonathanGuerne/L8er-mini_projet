@@ -48,6 +48,8 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
         onUpgrade(db, oldVersion, newVersion)
     }
 
+
+
     @Throws(SQLiteConstraintException::class)
     fun insertSMS(sms: SMSModel): Boolean {
         val db = writableDatabase
