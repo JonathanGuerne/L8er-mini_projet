@@ -12,6 +12,7 @@ object DBContract {
             val COL_ID = "id"
             val COL_REC = "receiver"
             val COL_CON = "content"
+            val COL_DATE = "date"
         }
     }
 }

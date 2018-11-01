@@ -68,9 +68,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        var result = smsDBHelper.insertSMS(SMSModel(smsid = 0,
-                receiver = "tom",content = "je suis un con"))
 
+        keepOldSmsWorkingOnStart()
     }
 
     private fun checkPermission() {
@@ -88,12 +87,12 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun setAlarm(time: Long) {
+    private fun setAlarm(time: Long, _number: String = "", _text_content: String = "") {
         val am = getSystemService(Context.ALARM_SERVICE)
         val intent = Intent(this, SMSSenderBroadcastReceiver::class.java)
 
-        val number = edtxtNumber.text.toString()
-        val text_content = edtxtText.text.toString()
+        val number = if (_number.isNullOrEmpty()) edtxtNumber.text.toString() else _number
+        val text_content = if (_text_content.isNullOrEmpty()) edtxtText.text.toString() else _text_content
 
         intent.putExtra("number", number)
         intent.putExtra("text_content", text_content)
@@ -107,9 +106,14 @@ class MainActivity : AppCompatActivity() {
         Log.d("SMS-sender", "Time remaining $tr")
 
         if (am is AlarmManager) {
-            am.set(AlarmManager.RTC, time, pIntent);
-            Toast.makeText(this, "Alarm is set", Toast.LENGTH_SHORT).show();
+            am.set(AlarmManager.RTC, time, pIntent)
+            if( _number.isNullOrEmpty()){
+                Toast.makeText(this, "Alarm is set", Toast.LENGTH_SHORT).show()
+            }
+        }
 
+        if (_number.isNullOrEmpty()){
+            smsDBHelper.insertSMS(SMSModel(smsDBHelper.getLastId(), number, text_content, time))
         }
     }
 
@@ -125,12 +129,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
-            RequestCodeSendSMS, RequestCodeReadContact -> if (grantResults.size > 0) {
+            RequestCodeSendSMS, RequestCodeReadContact -> if (grantResults.isNotEmpty()) {
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, R.string.permission_not_granted, Toast.LENGTH_SHORT).show()
                     closeNow()
                 }
             }
+        }
+    }
+
+    private fun keepOldSmsWorkingOnStart() {
+        var listSMS = smsDBHelper.readAllSMS()
+        listSMS.forEach {
+            Log.d("lol", it.date.toString() + "" + it.receiver + " " + it.content)
+            setAlarm(it.date, it.receiver, it.content)
         }
     }
 
