@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     private val ServiceSmsSenderID = 0
 
-    lateinit var smsDBHelper : SMSDBHelper
+    lateinit var smsDBHelper: SMSDBHelper
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,24 +50,21 @@ class MainActivity : AppCompatActivity() {
             var calendar = Calendar.getInstance()
 
             if (android.os.Build.VERSION.SDK_INT >= 23) {
-                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                        calendar.get(Calendar.DAY_OF_MONTH),
+                calendar.set(datePicker.year, datePicker.month, datePicker.dayOfMonth,
                         timePicker.hour, timePicker.minute, 0)
             } else {
-                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                        calendar.get(Calendar.DAY_OF_MONTH),
+                calendar.set(datePicker.year, datePicker.month, datePicker.dayOfMonth,
                         timePicker.currentHour, timePicker.currentMinute, 0)
             }
 
             setAlarm(calendar.timeInMillis)
-            
+
         }
 
-        btnChangeView.setOnClickListener{
-            val intent = Intent(this,ListViewActivity::class.java)
+        btnChangeView.setOnClickListener {
+            val intent = Intent(this, ListViewActivity::class.java)
             startActivity(intent)
         }
-
 
         keepOldSmsWorkingOnStart()
     }
