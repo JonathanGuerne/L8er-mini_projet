@@ -4,9 +4,12 @@ import android.provider.BaseColumns
 
 object DBContract {
 
+    //TODO add a group table
+
     /* Inner class that defines the table contents */
     class SMSEntry : BaseColumns {
 
+        // specify the programmed_sms table
         companion object {
             val TABLE_NAME = "PROGRAMMED_SMS"
             val COL_ID = "id"

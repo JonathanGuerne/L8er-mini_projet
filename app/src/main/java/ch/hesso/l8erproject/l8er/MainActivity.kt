@@ -8,45 +8,44 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
-import android.telephony.SmsManager
-import android.util.Log
 import android.widget.Toast
 import ch.hesso.l8erproject.l8er.models.SMSModel
-import ch.hesso.l8erproject.l8er.tools.SMSDBHelper
+import ch.hesso.l8erproject.l8er.tools.setAlarm
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
 
+    //value needed to get back te result when asking for specific user permission
     private val RequestCodeSendSMS = 2
     private val RequestCodeReadContact = 3
 
-
-    private val ServiceSmsSenderID = 0
-
-    lateinit var smsDBHelper: SMSDBHelper
+    // value use to identify the broadcast intent linked to a specific planned sms
+    // TODO change this value to be increment at the creation of a new sms. But we should always be able to delete a plan sms first
+    private val SVCSMSSENDERID = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        smsDBHelper = SMSDBHelper(this)
-
         //use this line to "reboot" the db. CAUTION this will earse all the content
-        //smsDBHelper.onUpgrade(smsDBHelper.writableDatabase,0,1)
+//        val smsDBHelper: SMSDBHelper = SMSDBHelper(this)
+//        smsDBHelper.onUpgrade(smsDBHelper.writableDatabase,0,1)
 
+        // will check if permission are granted, if not will ask the user
         checkPermission()
 
         btnCancel.setOnClickListener {
             deleteAlarm()
         }
 
+        //change the clock to have a 24 hours display
         timePicker.setIs24HourView(true)
+
 
         btnTmr.setOnClickListener {
 
@@ -60,7 +59,15 @@ class MainActivity : AppCompatActivity() {
                         timePicker.currentHour, timePicker.currentMinute, 0)
             }
 
-            setAlarm(calendar.timeInMillis)
+            // create a sms model using UI information
+            val smsModel: SMSModel = SMSModel(
+                    SVCSMSSENDERID,
+                    edtxtNumber.text.toString(),
+                    edtxtText.text.toString(),
+                    calendar.timeInMillis)
+
+            // set an alarm trough the sms planner
+            setAlarm(this, smsModel)
 
         }
 
@@ -68,10 +75,12 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, ListViewActivity::class.java)
             startActivity(intent)
         }
-
-        keepOldSmsWorkingOnStart()
     }
 
+    /**
+     * will check if permission are granted, if not will ask the user
+     * results are send to onRequestPermissionsResult()
+     */
     private fun checkPermission() {
 
         val smsPerm = ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
@@ -86,49 +95,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun setAlarm(time: Long, _number: String = "", _text_content: String = "") {
-        val am = getSystemService(Context.ALARM_SERVICE)
-        val intent = Intent(this, SMSSenderBroadcastReceiver::class.java)
-
-        val number = if (_number.isNullOrEmpty()) edtxtNumber.text.toString() else _number
-        val text_content = if (_text_content.isNullOrEmpty()) edtxtText.text.toString() else _text_content
-
-        intent.putExtra("number", number)
-        intent.putExtra("text_content", text_content)
-
-
-        val pIntent = PendingIntent.getBroadcast(this, ServiceSmsSenderID, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT)
-
-
-        var tr = time - System.currentTimeMillis()
-
-        Log.d("SMS-sender", "Time remaining $tr")
-
-        if (am is AlarmManager) {
-            am.set(AlarmManager.RTC, time, pIntent)
-            if( _number.isNullOrEmpty()){
-                Toast.makeText(this, "Alarm is set", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        if (_number.equals("")){
-            Log.d("SavingSMS","new sms saved to db")
-            smsDBHelper.insertSMS(SMSModel(smsDBHelper.getLastId() + 1, number, text_content, time))
-        }
-    }
-
-
-    private fun deleteAlarm() {
-
-        val am: AlarmManager? = getSystemService(Context.ALARM_SERVICE) as? AlarmManager
-        val cancelIntent = Intent(this, SMSSenderBroadcastReceiver::class.java)
-        val cancelPendingIntent = PendingIntent.getBroadcast(this, ServiceSmsSenderID, cancelIntent, 0)
-
-        am!!.cancel(cancelPendingIntent)
-    }
-
+    /**
+     * handle permission request results
+     */
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
             RequestCodeSendSMS, RequestCodeReadContact -> if (grantResults.isNotEmpty()) {
@@ -140,13 +109,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun keepOldSmsWorkingOnStart() {
-        var listSMS = smsDBHelper.readAllSMS()
-        listSMS.forEach {
-            Log.d("RestartedSMS", it.date.toString() + "" + it.receiver + " " + it.content)
-            setAlarm(it.date, it.receiver, it.content)
-        }
+    /**
+     * delete a specific alarm
+     * TODO: change the code to take an smsid in parameter.
+     * TODO: Move the code to the smsPlanner script ?
+     */
+    private fun deleteAlarm() {
+
+        val am: AlarmManager? = getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+        val cancelIntent = Intent(this, SMSSenderBroadcastReceiver::class.java)
+        val cancelPendingIntent = PendingIntent.getBroadcast(this, SVCSMSSENDERID, cancelIntent, 0)
+
+        am!!.cancel(cancelPendingIntent)
     }
+
 
     private fun closeNow() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -154,32 +130,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             finish()
         }
-    }
-
-    private fun sendSMS() {
-        var number = "0786656369"
-
-        val phones = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                null, null, null,
-                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC")
-
-        while (phones!!.moveToNext()) {
-            val name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
-            val phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-
-            if (name.toLowerCase().equals("jonathan guerne")) {
-                number = phoneNumber
-                break
-            }
-        }
-        phones.close()
-
-
-        val text = "SMS automatique depuis kotlin :D"
-
-        SmsManager.getDefault().sendTextMessage(number, null, text, null, null)
-
-        Toast.makeText(this, "sms sent.", Toast.LENGTH_SHORT).show()
     }
 
 }
