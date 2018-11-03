@@ -3,4 +3,6 @@
     <string name="permission_not_granted">Permissions where not granted!</string>
     <string name="number">Number</string>
     <string name="text">Text</string>
+    <string name="hour">Hour</string>
+    <string name="date">Date</string>
 </resources>

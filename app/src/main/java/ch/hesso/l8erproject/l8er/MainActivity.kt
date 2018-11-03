@@ -2,7 +2,9 @@ package ch.hesso.l8erproject.l8er
 
 import android.Manifest
 import android.app.AlarmManager
+import android.app.DatePickerDialog
 import android.app.PendingIntent
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -14,6 +16,7 @@ import android.widget.Toast
 import ch.hesso.l8erproject.l8er.models.SMSModel
 import ch.hesso.l8erproject.l8er.tools.setAlarm
 import kotlinx.android.synthetic.main.activity_main.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -42,6 +45,10 @@ class MainActivity : AppCompatActivity() {
         btnCancel.setOnClickListener {
             deleteAlarm()
         }
+
+
+        setUpHourEditText()
+        setUpDateEditText()
 
         //change the clock to have a 24 hours display
         timePicker.setIs24HourView(true)
@@ -76,6 +83,63 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
+
+    private fun setUpHourEditText() {
+        val myCalendar = Calendar.getInstance()
+
+
+        val time = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+            myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+            myCalendar.set(Calendar.MINUTE, minute)
+            myCalendar.set(Calendar.SECOND, 0)
+
+            val myFormat = "HH:mm" //In which you need put here
+            val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
+
+            edtxtHour.setText(sdf.format(myCalendar.getTime()))
+        }
+
+
+        edtxtHour.setOnClickListener {
+            TimePickerDialog(this, time,
+                    myCalendar.get(Calendar.HOUR_OF_DAY),
+                    myCalendar.get(Calendar.MINUTE),
+                    true).show()
+        }
+
+        
+    }
+
+
+    private fun setUpDateEditText() {
+        val myCalendar = Calendar.getInstance()
+
+
+        val date = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            myCalendar.set(Calendar.YEAR, year);
+            myCalendar.set(Calendar.MONTH, monthOfYear);
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+            val myFormat = "dd/MM/yy"
+            val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
+
+            edtxtDate.setText(sdf.format(myCalendar.getTime()))
+        }
+
+
+        edtxtDate.setOnClickListener {
+            DatePickerDialog(this, date,
+                    myCalendar.get(Calendar.YEAR),
+                    myCalendar.get(Calendar.MONTH),
+                    myCalendar.get(Calendar.DAY_OF_MONTH)).show()
+        }
+
+
+    }
+
+
+
 
     /**
      * will check if permission are granted, if not will ask the user
