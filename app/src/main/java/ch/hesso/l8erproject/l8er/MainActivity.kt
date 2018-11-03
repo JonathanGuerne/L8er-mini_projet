@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     // TODO change this value to be increment at the creation of a new sms. But we should always be able to delete a plan sms first
     private val SVCSMSSENDERID = 0
 
+    private val popupCalendar = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,29 +50,16 @@ class MainActivity : AppCompatActivity() {
 
         setUpHourEditText()
         setUpDateEditText()
-
-        //change the clock to have a 24 hours display
-        timePicker.setIs24HourView(true)
-
-
+        
         btnTmr.setOnClickListener {
 
-            var calendar = Calendar.getInstance()
-
-            if (android.os.Build.VERSION.SDK_INT >= 23) {
-                calendar.set(datePicker.year, datePicker.month, datePicker.dayOfMonth,
-                        timePicker.hour, timePicker.minute, 0)
-            } else {
-                calendar.set(datePicker.year, datePicker.month, datePicker.dayOfMonth,
-                        timePicker.currentHour, timePicker.currentMinute, 0)
-            }
 
             // create a sms model using UI information
             val smsModel: SMSModel = SMSModel(
                     SVCSMSSENDERID,
                     edtxtNumber.text.toString(),
                     edtxtText.text.toString(),
-                    calendar.timeInMillis)
+                    popupCalendar.timeInMillis)
 
             // set an alarm trough the sms planner
             setAlarm(this, smsModel)
@@ -86,55 +74,59 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setUpHourEditText() {
-        val myCalendar = Calendar.getInstance()
-
 
         val time = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-            myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-            myCalendar.set(Calendar.MINUTE, minute)
-            myCalendar.set(Calendar.SECOND, 0)
+            popupCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+            popupCalendar.set(Calendar.MINUTE, minute)
+            popupCalendar.set(Calendar.SECOND, 0)
 
-            val myFormat = "HH:mm" //In which you need put here
+            val myFormat = "HH:mm"
             val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
 
-            edtxtHour.setText(sdf.format(myCalendar.getTime()))
+            edtxtHour.setText(sdf.format(popupCalendar.getTime()))
         }
 
 
         edtxtHour.setOnClickListener {
             TimePickerDialog(this, time,
-                    myCalendar.get(Calendar.HOUR_OF_DAY),
-                    myCalendar.get(Calendar.MINUTE),
+                    popupCalendar.get(Calendar.HOUR_OF_DAY),
+                    popupCalendar.get(Calendar.MINUTE),
                     true).show()
         }
 
-        
+
+        val myFormat = "HH:mm"
+        val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
+
+        edtxtHour.setText(sdf.format(popupCalendar.getTime()))
     }
 
 
     private fun setUpDateEditText() {
-        val myCalendar = Calendar.getInstance()
-
 
         val date = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            myCalendar.set(Calendar.YEAR, year);
-            myCalendar.set(Calendar.MONTH, monthOfYear);
-            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            popupCalendar.set(Calendar.YEAR, year);
+            popupCalendar.set(Calendar.MONTH, monthOfYear);
+            popupCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
             val myFormat = "dd/MM/yy"
             val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
 
-            edtxtDate.setText(sdf.format(myCalendar.getTime()))
+            edtxtDate.setText(sdf.format(popupCalendar.getTime()))
         }
 
 
         edtxtDate.setOnClickListener {
             DatePickerDialog(this, date,
-                    myCalendar.get(Calendar.YEAR),
-                    myCalendar.get(Calendar.MONTH),
-                    myCalendar.get(Calendar.DAY_OF_MONTH)).show()
+                    popupCalendar.get(Calendar.YEAR),
+                    popupCalendar.get(Calendar.MONTH),
+                    popupCalendar.get(Calendar.DAY_OF_MONTH)).show()
         }
 
+        val myFormat = "dd/MM/yy"
+        val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
+
+        edtxtDate.setText(sdf.format(popupCalendar.getTime()))
 
     }
 
