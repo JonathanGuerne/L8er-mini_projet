@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         smsDBHelper = SMSDBHelper(this)
 
-        //use this line to "reboot" the db. CAUTION this will earse all the content
+        //use this line to "reboot" the db. CAUTION this will erase all the content
         //smsDBHelper.onUpgrade(smsDBHelper.writableDatabase,0,1)
 
         checkPermission()
@@ -91,8 +91,8 @@ class MainActivity : AppCompatActivity() {
         val am = getSystemService(Context.ALARM_SERVICE)
         val intent = Intent(this, SMSSenderBroadcastReceiver::class.java)
 
-        val number = if (_number.isNullOrEmpty()) edtxtNumber.text.toString() else _number
-        val text_content = if (_text_content.isNullOrEmpty()) edtxtText.text.toString() else _text_content
+        val number = if (_number.equals("")) edtxtNumber.text.toString() else _number
+        val text_content = if (_text_content.equals("")) edtxtText.text.toString() else _text_content
 
         intent.putExtra("number", number)
         intent.putExtra("text_content", text_content)
@@ -108,14 +108,14 @@ class MainActivity : AppCompatActivity() {
 
         if (am is AlarmManager) {
             am.set(AlarmManager.RTC, time, pIntent)
-            if( _number.isNullOrEmpty()){
+            if( _number.equals("")){
                 Toast.makeText(this, "Alarm is set", Toast.LENGTH_SHORT).show()
             }
         }
 
         if (_number.equals("")){
             Log.d("SavingSMS","new sms saved to db")
-            smsDBHelper.insertSMS(SMSModel(smsDBHelper.getLastId() + 1, number, text_content, time))
+            smsDBHelper.insertSMS(SMSModel(smsDBHelper.getLastId(), number, text_content, time))
         }
     }
 
@@ -143,7 +143,6 @@ class MainActivity : AppCompatActivity() {
     private fun keepOldSmsWorkingOnStart() {
         var listSMS = smsDBHelper.readAllSMS()
         listSMS.forEach {
-            Log.d("RestartedSMS", it.date.toString() + "" + it.receiver + " " + it.content)
             setAlarm(it.date, it.receiver, it.content)
         }
     }
