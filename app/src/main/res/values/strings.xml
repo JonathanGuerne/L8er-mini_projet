@@ -5,4 +5,8 @@
     <string name="text">Text</string>
     <string name="hour">Hour</string>
     <string name="date">Date</string>
+    <string name="who">WHO ?</string>
+    <string name="when">WHEN ?</string>
+    <string name="what">WHAT ?</string>
+    <string name="search">SEARCH</string>
 </resources>
