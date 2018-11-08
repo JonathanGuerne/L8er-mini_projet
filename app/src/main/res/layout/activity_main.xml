@@ -20,9 +20,55 @@
             android:layout_height="wrap_content"
             android:text="Change View" />
 
-        <Space
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp" />
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txtviewHour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/hour" />
+
+            <EditText
+                android:id="@+id/edtxtHour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:ems="10"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:inputType="time" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txtviewDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/date" />
+
+            <EditText
+                android:id="@+id/edtxtDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:ems="10"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:inputType="date" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -70,26 +116,6 @@
 
         </LinearLayout>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_weight="1" />
-
-        <TimePicker
-            android:id="@+id/timePicker"
-            android:layout_width="wrap_content"
-            android:layout_height="351dp" />
-
-
-        <DatePicker
-            android:id="@+id/datePicker"
-            android:layout_width="wrap_content"
-            android:layout_height="351dp" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_weight="1" />
 
         <LinearLayout
             android:layout_width="match_parent"

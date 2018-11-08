@@ -16,6 +16,7 @@ import kotlin.system.exitProcess
 
 class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
+    //TODO handle group
 
     companion object {
         // If you change the database schema, you must increment the database version.
