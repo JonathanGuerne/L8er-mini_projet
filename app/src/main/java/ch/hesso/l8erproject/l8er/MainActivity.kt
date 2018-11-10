@@ -14,6 +14,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import ch.hesso.l8erproject.l8er.models.SMSModel
+import ch.hesso.l8erproject.l8er.tools.SMSDBHelper
 import ch.hesso.l8erproject.l8er.tools.setAlarm
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
@@ -28,9 +29,11 @@ class MainActivity : AppCompatActivity() {
 
     // value use to identify the broadcast intent linked to a specific planned sms
     // TODO change this value to be increment at the creation of a new sms. But we should always be able to delete a plan sms first
-    private val SVCSMSSENDERID = 0
+    private var SVCSMSSENDERID = 0
 
     private val popupCalendar = Calendar.getInstance()
+
+    private val smsdbHelper = SMSDBHelper(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         
         btnTmr.setOnClickListener {
 
+            SVCSMSSENDERID = smsdbHelper.getLastId() + 1
 
             // create a sms model using UI information
             val smsModel: SMSModel = SMSModel(
