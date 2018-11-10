@@ -20,7 +20,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.provider.ContactsContract
 import android.app.Activity
+import android.net.wifi.WifiConfiguration
+import android.net.wifi.WifiManager
 import android.util.Log
+import android.content.IntentFilter
+import android.content.BroadcastReceiver
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -41,6 +47,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+        test()
 
         //use this line to "reboot" the db. CAUTION this will earse all the content
 //        val smsDBHelper: SMSDBHelper = SMSDBHelper(this)
@@ -82,6 +91,29 @@ class MainActivity : AppCompatActivity() {
             intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE)
             startActivityForResult(intent, PICK_CONTACT);
         }
+
+        setupWIFIBroadcast()
+    }
+
+    private fun setupWIFIBroadcast() {
+        val broadcastReceiver = WifiBroadcastReceiver()
+
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION)
+        this.registerReceiver(broadcastReceiver, intentFilter)
+    }
+
+    private fun test() {
+        val wifiManager = getApplicationContext().getSystemService(Context.WIFI_SERVICE) as WifiManager
+
+        var out = ""
+
+        for (wifi: WifiConfiguration in wifiManager.configuredNetworks){
+              out += wifi.SSID+"\n"
+        }
+
+
+        tvTest.setText(out)
     }
 
     public override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent) {
