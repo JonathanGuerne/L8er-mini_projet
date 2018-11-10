@@ -19,6 +19,9 @@ import ch.hesso.l8erproject.l8er.tools.setAlarm
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
 import java.util.*
+import android.provider.ContactsContract
+import android.app.Activity
+import android.util.Log
 
 
 class MainActivity : AppCompatActivity() {
@@ -34,6 +37,8 @@ class MainActivity : AppCompatActivity() {
     private val popupCalendar = Calendar.getInstance()
 
     private val smsdbHelper = SMSDBHelper(this)
+
+    private val PICK_CONTACT = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +58,7 @@ class MainActivity : AppCompatActivity() {
 
         setUpHourEditText()
         setUpDateEditText()
-        
+
         btnTmr.setOnClickListener {
 
             SVCSMSSENDERID = smsdbHelper.getLastId() + 1
@@ -73,6 +78,39 @@ class MainActivity : AppCompatActivity() {
         btnChangeView.setOnClickListener {
             val intent = Intent(this, ListViewActivity::class.java)
             startActivity(intent)
+        }
+
+        btnSearch.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
+            intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE)
+            startActivityForResult(intent, PICK_CONTACT);
+        }
+    }
+
+    public override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent) {
+        super.onActivityResult(reqCode, resultCode, data)
+
+        when (reqCode) {
+            PICK_CONTACT -> if (resultCode == Activity.RESULT_OK) {
+                Log.d("data-contact", data.data.toString())
+                val contactData = data.data
+                val phones = contentResolver.query(contactData!!, null,
+                        null, null, null)
+
+
+                while (phones!!.moveToNext()) {
+
+                    val name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
+                    val phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+
+                    txtviewName.setText(name)
+                    edtxtNumber.setText(phoneNumber)
+
+                }
+                phones.close()
+            }
+
+
         }
     }
 
@@ -124,6 +162,7 @@ class MainActivity : AppCompatActivity() {
                     popupCalendar.get(Calendar.MONTH),
                     popupCalendar.get(Calendar.DAY_OF_MONTH)).show()
         }
+
 
         val myFormat = "dd/MM/yy"
         val sdf = SimpleDateFormat(myFormat, Locale.getDefault())

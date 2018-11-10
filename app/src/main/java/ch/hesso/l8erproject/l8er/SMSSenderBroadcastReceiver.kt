@@ -30,8 +30,8 @@ class SMSSenderBroadcastReceiver : BroadcastReceiver() {
 
             //get number and content and send the sms
             val number = intent.extras.getString("number")
-            val text_content = intent.extras.getString("text_content")
-            //sendSMS(context, number, text_content)
+            val text_content = intent.extras.getString("textContent")
+            sendSMS(context, number, text_content)
         }
     }
 
