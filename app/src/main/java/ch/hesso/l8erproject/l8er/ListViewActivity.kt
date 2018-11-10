@@ -2,9 +2,8 @@ package ch.hesso.l8erproject.l8er
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.ArrayAdapter
-import android.widget.ListView
+import android.support.v7.widget.LinearLayoutManager
+import ch.hesso.l8erproject.l8er.adapter.SMSAdapter
 import ch.hesso.l8erproject.l8er.tools.SMSDBHelper
 import kotlinx.android.synthetic.main.activity_list_view.*
 
@@ -15,25 +14,13 @@ class ListViewActivity : AppCompatActivity() {
         setContentView(R.layout.activity_list_view)
 
         //read the data
-
         val smsDBHelper = SMSDBHelper(this)
-        var listSMS = smsDBHelper.readAllSMS()
-        listSMS.forEach {
-            Log.d("SQLiteHandler", "sms on db : " +
-                    "${it.receiver.toString()}, ${it.content.toString()}")
+        var listItems = smsDBHelper.readAllSMS()
+
+        sms_list_view.apply {
+            layoutManager = LinearLayoutManager(this@ListViewActivity)
+            adapter = SMSAdapter(listItems)
         }
-
-
-        val listItems = arrayOfNulls<String>(listSMS.size)
-
-        for (i in 0 until listItems.size){
-            val sms = listSMS[i]
-            listItems[i] = sms.receiver
-        }
-
-        val adapter = ArrayAdapter(this,android.R.layout.simple_list_item_1,listItems)
-        sms_list_view.adapter = adapter
-
 
     }
 }

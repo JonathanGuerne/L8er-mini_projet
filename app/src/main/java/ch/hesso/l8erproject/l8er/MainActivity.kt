@@ -14,6 +14,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import ch.hesso.l8erproject.l8er.models.SMSModel
+import ch.hesso.l8erproject.l8er.tools.SMSDBHelper
 import ch.hesso.l8erproject.l8er.tools.setAlarm
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
@@ -37,10 +38,11 @@ class MainActivity : AppCompatActivity() {
 
     // value use to identify the broadcast intent linked to a specific planned sms
     // TODO change this value to be increment at the creation of a new sms. But we should always be able to delete a plan sms first
-    private val SVCSMSSENDERID = 0
+    private var SVCSMSSENDERID = 0
 
     private val popupCalendar = Calendar.getInstance()
 
+    private val smsdbHelper = SMSDBHelper(this)
 
     private val PICK_CONTACT = 10
 
@@ -52,8 +54,8 @@ class MainActivity : AppCompatActivity() {
         test()
 
         //use this line to "reboot" the db. CAUTION this will earse all the content
-//        val smsDBHelper: SMSDBHelper = SMSDBHelper(this)
-//        smsDBHelper.onUpgrade(smsDBHelper.writableDatabase,0,1)
+        //val smsDBHelper: SMSDBHelper = SMSDBHelper(this)
+        //smsDBHelper.onUpgrade(smsDBHelper.writableDatabase,0,1)
 
         // will check if permission are granted, if not will ask the user
         checkPermission()
@@ -68,6 +70,7 @@ class MainActivity : AppCompatActivity() {
 
         btnTmr.setOnClickListener {
 
+            SVCSMSSENDERID = smsdbHelper.getLastId() + 1
 
             // create a sms model using UI information
             val smsModel: SMSModel = SMSModel(
@@ -165,7 +168,6 @@ class MainActivity : AppCompatActivity() {
                     true).show()
         }
 
-
         val myFormat = "HH:mm"
         val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
 
@@ -182,7 +184,6 @@ class MainActivity : AppCompatActivity() {
 
             val myFormat = "dd/MM/yy"
             val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
-
             edtxtDate.setText(sdf.format(popupCalendar.getTime()))
         }
 
