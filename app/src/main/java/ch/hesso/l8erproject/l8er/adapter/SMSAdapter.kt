@@ -24,6 +24,16 @@ class SMSAdapter(private val smsArray: ArrayList<SMSModel>) : RecyclerView.Adapt
         holder.sms_content.text = content
     }
 
+    fun addItem(sms: SMSModel) {
+        smsArray.add(sms)
+        notifyItemInserted(smsArray.size)
+    }
+
+    fun removeAt(position: Int) {
+        smsArray.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val sms_content : TextView = itemView.sms_content
     }

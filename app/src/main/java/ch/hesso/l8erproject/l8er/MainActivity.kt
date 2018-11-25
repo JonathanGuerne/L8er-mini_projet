@@ -109,8 +109,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 phones.close()
             }
-
-
         }
     }
 
