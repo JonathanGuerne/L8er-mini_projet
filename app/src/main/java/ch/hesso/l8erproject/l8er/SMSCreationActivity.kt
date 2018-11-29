@@ -46,8 +46,7 @@ class SMSCreationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-
+        
         //test()
 
         //use this line to "reboot" the db. CAUTION this will earse all the content

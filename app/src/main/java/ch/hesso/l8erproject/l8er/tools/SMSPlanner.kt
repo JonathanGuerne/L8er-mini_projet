@@ -9,7 +9,7 @@ import android.widget.Toast
 import ch.hesso.l8erproject.l8er.SMSSenderBroadcastReceiver
 import ch.hesso.l8erproject.l8er.models.SMSModel
 
-fun setNewPlannedSMS(context: Context, smsModel: SMSModel, newSms: Boolean = true) {
+fun setNewPlannedSMS(context: Context, smsModel: SMSModel, newSms: Boolean = true, update: Boolean = false) {
 
     val number = smsModel.receiver
     val text_content = smsModel.content
@@ -26,8 +26,13 @@ fun setNewPlannedSMS(context: Context, smsModel: SMSModel, newSms: Boolean = tru
     planSMS(context, pIntent, smsModel.date, newSms)
 
     //save to db if necessary
-    if (newSms){
+    if (newSms && !update){
         saveToDB(context,smsModel)
+    }
+
+    //update to db
+    if (update && !newSms){
+        updatingDB(context, smsModel)
     }
 }
 
@@ -66,6 +71,14 @@ fun deletePlannedSMS(context: Context, smsId: Int) {
     val cancelPendingIntent = PendingIntent.getBroadcast(context, smsId, cancelIntent, 0)
 
     am!!.cancel(cancelPendingIntent)
+}
+
+fun updatingDB(context: Context, smsModel: SMSModel){
+    val smsDBHelper = SMSDBHelper(context)
+
+    Log.d("UpdatingSMS", "sms updated to db")
+    smsDBHelper.deleteSMS(smsModel.smsid)
+    smsDBHelper.insertSMS(smsModel)
 }
 
 /**
