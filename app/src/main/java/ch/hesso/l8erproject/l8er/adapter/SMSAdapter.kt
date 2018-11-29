@@ -1,5 +1,7 @@
 package ch.hesso.l8erproject.l8er.adapter
 
+import android.graphics.Color
+import android.support.design.widget.Snackbar
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -24,9 +26,18 @@ class SMSAdapter(private val smsArray: ArrayList<SMSModel>) : RecyclerView.Adapt
         holder.sms_content.text = content
     }
 
-    fun addItem(sms: SMSModel) {
-        smsArray.add(sms)
-        notifyItemInserted(smsArray.size)
+    fun restoreItem(sms: SMSModel, list_view: View) {
+        val snackbar = Snackbar.make(list_view, "removed " + sms.smsid + " from cart!", Snackbar.LENGTH_LONG)
+        snackbar.setAction("UNDO", View.OnClickListener {
+            smsArray.add(sms)
+            notifyItemInserted(smsArray.size)
+        })
+        snackbar.setActionTextColor(Color.YELLOW)
+        snackbar.show()
+    }
+
+    fun updateItem(position: Int, sms: SMSModel){
+        notifyItemChanged(position)
     }
 
     fun removeAt(position: Int) {

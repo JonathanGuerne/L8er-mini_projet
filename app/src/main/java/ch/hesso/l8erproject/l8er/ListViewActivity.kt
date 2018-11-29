@@ -9,6 +9,7 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import ch.hesso.l8erproject.l8er.adapter.SMSAdapter
 import ch.hesso.l8erproject.l8er.tools.SMSDBHelper
 import ch.hesso.l8erproject.l8er.tools.SwipeToDelete
+import ch.hesso.l8erproject.l8er.tools.SwipeToEdit
 import kotlinx.android.synthetic.main.activity_list_view.*
 
 class ListViewActivity : AppCompatActivity() {
@@ -22,18 +23,40 @@ class ListViewActivity : AppCompatActivity() {
         var listItems = smsDBHelper.readAllSMS()
 
         sms_list_view.apply {
-            layoutManager = LinearLayoutManager(this@ListViewActivity)
+
             val adapter_SMS = SMSAdapter(listItems)
+            val list_view = findViewById<RecyclerView>(R.id.sms_list_view)
+
+            layoutManager = LinearLayoutManager(this@ListViewActivity)
             adapter = adapter_SMS
+
             addItemDecoration(DividerItemDecoration(this@ListViewActivity, DividerItemDecoration.VERTICAL))
 
             val swipeHandler = object : SwipeToDelete(this@ListViewActivity) {
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    adapter_SMS.removeAt(viewHolder.adapterPosition)
+                    val sms = listItems[viewHolder.adapterPosition]
+
+                    if (direction == ItemTouchHelper.LEFT){
+                        adapter_SMS.removeAt(viewHolder.adapterPosition)
+                        adapter_SMS.restoreItem(sms, list_view)
+                    }
                 }
             }
+
+            val swipeHandler2 = object : SwipeToEdit(this@ListViewActivity) {
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    val sms = listItems[viewHolder.adapterPosition]
+
+                    if (direction == ItemTouchHelper.RIGHT){
+                        adapter_SMS.updateItem(viewHolder.adapterPosition, sms)
+                    }
+                }
+            }
+
             val itemTouchHelper = ItemTouchHelper(swipeHandler)
+            val itemTouchHelper2 = ItemTouchHelper(swipeHandler2)
             itemTouchHelper.attachToRecyclerView(this)
+            itemTouchHelper2.attachToRecyclerView(this)
         }
 
     }
