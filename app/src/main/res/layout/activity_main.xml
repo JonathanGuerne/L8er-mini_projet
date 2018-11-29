@@ -4,12 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".SMSCreationActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
         android:orientation="vertical">
 
 
@@ -158,7 +160,16 @@
                 android:layout_height="wrap_content"
                 android:text="Cancel"
                 android:textSize="28dp" />
+
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvTest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Test display"
+            android:textSize="16dp" />
 
 
     </LinearLayout>
