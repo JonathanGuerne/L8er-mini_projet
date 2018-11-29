@@ -141,8 +141,6 @@ class SMSCreationActivity : AppCompatActivity() {
                 }
                 phones.close()
             }
-
-
         }
     }
 
