@@ -11,6 +11,7 @@ import ch.hesso.l8erproject.l8er.adapter.SMSAdapter
 import ch.hesso.l8erproject.l8er.tools.SMSDBHelper
 import ch.hesso.l8erproject.l8er.tools.SwipeToDelete
 import ch.hesso.l8erproject.l8er.tools.SwipeToEdit
+import ch.hesso.l8erproject.l8er.tools.deletePlannedSMS
 import kotlinx.android.synthetic.main.activity_list_view.*
 
 class ListViewActivity : AppCompatActivity() {
@@ -39,7 +40,9 @@ class ListViewActivity : AppCompatActivity() {
 
                     if (direction == ItemTouchHelper.LEFT){
                         adapter_SMS.removeAt(viewHolder.adapterPosition)
-                        adapter_SMS.restoreItem(sms, list_view)
+                        deletePlannedSMS(applicationContext, sms.smsid)
+                        smsDBHelper.deleteSMS(sms.smsid)
+                        adapter_SMS.restoreItem(sms, list_view, applicationContext)
                     }
                 }
             }

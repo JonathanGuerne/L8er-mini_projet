@@ -1,5 +1,6 @@
 package ch.hesso.l8erproject.l8er.adapter
 
+import android.content.Context
 import android.graphics.Color
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.RecyclerView
@@ -9,6 +10,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import ch.hesso.l8erproject.l8er.R
 import ch.hesso.l8erproject.l8er.models.SMSModel
+import ch.hesso.l8erproject.l8er.tools.SMSDBHelper
+import ch.hesso.l8erproject.l8er.tools.deletePlannedSMS
+import ch.hesso.l8erproject.l8er.tools.setNewPlannedSMS
 import kotlinx.android.synthetic.main.sms_row.view.*
 
 class SMSAdapter(private val smsArray: ArrayList<SMSModel>) : RecyclerView.Adapter<SMSAdapter.ViewHolder>() {
@@ -26,10 +30,11 @@ class SMSAdapter(private val smsArray: ArrayList<SMSModel>) : RecyclerView.Adapt
         holder.sms_content.text = content
     }
 
-    fun restoreItem(sms: SMSModel, list_view: View) {
+    fun restoreItem(sms: SMSModel, list_view: View, context: Context) {
         val snackbar = Snackbar.make(list_view, "removed " + sms.smsid + " from cart!", Snackbar.LENGTH_LONG)
         snackbar.setAction("UNDO", View.OnClickListener {
             smsArray.add(sms)
+            setNewPlannedSMS(context, sms, true)
             notifyItemInserted(smsArray.size)
         })
         snackbar.setActionTextColor(Color.YELLOW)

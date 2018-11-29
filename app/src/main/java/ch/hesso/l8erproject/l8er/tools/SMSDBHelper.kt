@@ -73,7 +73,7 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
 
         val db = writableDatabase
 
-        val selection = DBContract.SMSEntry.COL_ID + "LIKE ?"
+        val selection = DBContract.SMSEntry.COL_ID + " LIKE ?"
 
         val selectionArgs = arrayOf(smsid.toString())
 

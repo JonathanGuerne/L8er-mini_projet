@@ -15,7 +15,7 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import ch.hesso.l8erproject.l8er.models.SMSModel
 import ch.hesso.l8erproject.l8er.tools.SMSDBHelper
-import ch.hesso.l8erproject.l8er.tools.setAlarm
+import ch.hesso.l8erproject.l8er.tools.setNewPlannedSMS
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -77,7 +77,7 @@ class SMSCreationActivity : AppCompatActivity() {
                     popupCalendar.timeInMillis)
 
             // set an alarm trough the sms planner
-            setAlarm(this, smsModel)
+            setNewPlannedSMS(this, smsModel)
 
         }
 

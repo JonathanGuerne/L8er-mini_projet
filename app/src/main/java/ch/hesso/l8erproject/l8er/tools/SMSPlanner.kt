@@ -9,7 +9,7 @@ import android.widget.Toast
 import ch.hesso.l8erproject.l8er.SMSSenderBroadcastReceiver
 import ch.hesso.l8erproject.l8er.models.SMSModel
 
-fun setAlarm(context: Context, smsModel: SMSModel, newSms: Boolean = true) {
+fun setNewPlannedSMS(context: Context, smsModel: SMSModel, newSms: Boolean = true) {
 
     val number = smsModel.receiver
     val text_content = smsModel.content
@@ -53,6 +53,19 @@ private fun planSMS(context: Context, pIntent: PendingIntent, date: Long, showTo
             Toast.makeText(context, "Alarm is set", Toast.LENGTH_SHORT).show()
         }
     }
+}
+
+
+/**
+ * delete the sms that was planned with the corresponding id in the parameter
+ */
+fun deletePlannedSMS(context: Context, smsId: Int) {
+
+    val am: AlarmManager? = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+    val cancelIntent = Intent(context, SMSSenderBroadcastReceiver::class.java)
+    val cancelPendingIntent = PendingIntent.getBroadcast(context, smsId, cancelIntent, 0)
+
+    am!!.cancel(cancelPendingIntent)
 }
 
 /**

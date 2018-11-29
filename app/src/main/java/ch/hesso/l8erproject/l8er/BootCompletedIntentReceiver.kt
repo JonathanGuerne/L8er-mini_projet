@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import ch.hesso.l8erproject.l8er.tools.SMSDBHelper
-import ch.hesso.l8erproject.l8er.tools.setAlarm
+import ch.hesso.l8erproject.l8er.tools.setNewPlannedSMS
 
 
 class BootCompletedIntentReceiver : BroadcastReceiver() {
@@ -20,7 +20,7 @@ class BootCompletedIntentReceiver : BroadcastReceiver() {
             val listSMS = smsDBHelper.readAllSMS()
             listSMS.forEach {
                 Log.d("RestartedSMS", it.date.toString() + " " + it.receiver + " " + it.content)
-                setAlarm(context, smsModel = it, newSms = false)
+                setNewPlannedSMS(context, smsModel = it, newSms = false)
             }
         }
     }
