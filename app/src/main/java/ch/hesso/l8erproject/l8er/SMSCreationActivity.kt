@@ -30,7 +30,7 @@ import android.content.BroadcastReceiver
 
 
 
-class MainActivity : AppCompatActivity() {
+class SMSCreationActivity : AppCompatActivity() {
 
     //value needed to get back te result when asking for specific user permission
     private val RequestCodeSendSMS = 2
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-        test()
+        //test()
 
         //use this line to "reboot" the db. CAUTION this will earse all the content
         //val smsDBHelper: SMSDBHelper = SMSDBHelper(this)
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, PICK_CONTACT);
         }
 
-        setupWIFIBroadcast()
+        //setupWIFIBroadcast()
     }
 
     private fun setupWIFIBroadcast() {
