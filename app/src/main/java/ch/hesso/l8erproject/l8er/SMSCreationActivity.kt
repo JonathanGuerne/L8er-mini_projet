@@ -25,9 +25,6 @@ import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiManager
 import android.util.Log
 import android.content.IntentFilter
-import android.content.BroadcastReceiver
-
-
 
 
 class SMSCreationActivity : AppCompatActivity() {
@@ -70,7 +67,7 @@ class SMSCreationActivity : AppCompatActivity() {
 
         btnTmr.setOnClickListener {
 
-            SVCSMSSENDERID = smsdbHelper.getLastId() + 1
+            SVCSMSSENDERID = smsdbHelper.getLastId()
 
             // create a sms model using UI information
             val smsModel: SMSModel = SMSModel(

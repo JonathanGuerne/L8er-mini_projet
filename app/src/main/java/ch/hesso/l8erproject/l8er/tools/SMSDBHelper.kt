@@ -22,7 +22,7 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
         // If you change the database schema, you must increment the database version.
         val DATABASE_VERSION = 1
         val DATABASE_NAME = "ProgrammedSMS.db"
-        var LAST_ID: Long = 0
+        var LAST_ID: Long = -1
 
         private val SQL_CREATE_ENTRIES =
                 "CREATE TABLE " + DBContract.SMSEntry.TABLE_NAME + " (" +
@@ -114,8 +114,34 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
         return listSMS
     }
 
+    fun numberOfRow(): Int{
+        val db = writableDatabase
+        var cursor: Cursor? = null
+        try {
+            cursor = db.rawQuery("select count(*) as c from " + DBContract.SMSEntry.TABLE_NAME, null)
+        } catch (e: SQLiteException) {
+            db.execSQL(SQL_CREATE_ENTRIES)
+            return -1
+        }
+
+        var numberOfRow = 0
+
+        if (cursor!!.moveToFirst()) {
+            while (cursor.isAfterLast == false) {
+                numberOfRow = cursor.getString(cursor.getColumnIndex("c")).toInt()
+                cursor.moveToNext()
+            }
+        }
+
+        return numberOfRow
+    }
+
     fun getLastId(): Int{
-        return LAST_ID.toInt()
+        if (LAST_ID < 0){
+            return numberOfRow()
+        }else{
+            return LAST_ID.toInt() + 1
+        }
     }
 
     fun readAllSMS(): ArrayList<SMSModel> {
