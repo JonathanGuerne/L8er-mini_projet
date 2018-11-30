@@ -31,14 +31,12 @@ class SMSCreationActivity : AppCompatActivity() {
     private val RequestCodeSendSMS = 2
     private val RequestCodeReadContact = 3
 
-    // value use to identify the broadcast intent linked to a specific planned sms
-    // TODO change this value to be increment at the creation of a new sms. But we should always be able to delete a plan sms first
-    private var SVCSMSSENDERID = 0
 
     private val popupCalendar = Calendar.getInstance()
 
     private val smsdbHelper = SMSDBHelper(this)
 
+    // intent code use to lauch the contact activity for result
     private val PICK_CONTACT = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,10 +48,6 @@ class SMSCreationActivity : AppCompatActivity() {
         // will check if permission are granted, if not will ask the user
         checkPermission()
 
-//        btnCancel.setOnClickListener {
-//            deleteAlarm()
-//        }
-
 
         setUpHourEditText()
         setUpDateEditText()
@@ -61,11 +55,10 @@ class SMSCreationActivity : AppCompatActivity() {
         btnTmr.setOnClickListener {
 
             if (fieldconditions()) {
-                SVCSMSSENDERID = smsdbHelper.getLastId()
 
                 // create a sms model using UI information
                 val smsModel: SMSModel = SMSModel(
-                        SVCSMSSENDERID,
+                        smsdbHelper.getLastId(),
                         edtxtNumber.text.toString(),
                         edtxtText.text.toString(),
                         popupCalendar.timeInMillis)
@@ -92,6 +85,8 @@ class SMSCreationActivity : AppCompatActivity() {
      * this function is called when the user click on the validate button
      * it is used to prevent the creation of an sms model
      * with problematic/absent data
+     *
+     * todo check for sql injection in text
      */
     private fun fieldconditions(): Boolean {
 
@@ -239,20 +234,6 @@ class SMSCreationActivity : AppCompatActivity() {
             }
         }
     }
-
-//    /**
-//     * delete a specific alarm
-//     * TODO: change the code to take an smsid in parameter.
-//     * TODO: Move the code to the smsPlanner script ?
-//     */
-//    private fun deleteAlarm() {
-//
-//        val am: AlarmManager? = getSystemService(Context.ALARM_SERVICE) as? AlarmManager
-//        val cancelIntent = Intent(this, SMSSenderBroadcastReceiver::class.java)
-//        val cancelPendingIntent = PendingIntent.getBroadcast(this, SVCSMSSENDERID, cancelIntent, 0)
-//
-//        am!!.cancel(cancelPendingIntent)
-//    }
 
 
     private fun closeNow() {

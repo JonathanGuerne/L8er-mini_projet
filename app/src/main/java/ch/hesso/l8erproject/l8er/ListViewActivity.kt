@@ -108,7 +108,8 @@ class ListViewActivity : AppCompatActivity() {
     }
 
     /**
-     * TODO udpate the sms list based on the db at this function call
+     * function call to update the listview content based on
+     * data stored in the db
      */
     fun refresh(view: View?){
         listItems.clear()
