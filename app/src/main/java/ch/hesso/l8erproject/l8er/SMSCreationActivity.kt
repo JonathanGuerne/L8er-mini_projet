@@ -1,9 +1,7 @@
 package ch.hesso.l8erproject.l8er
 
 import android.Manifest
-import android.app.AlarmManager
 import android.app.DatePickerDialog
-import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
@@ -62,26 +60,23 @@ class SMSCreationActivity : AppCompatActivity() {
 
         btnTmr.setOnClickListener {
 
-            SVCSMSSENDERID = smsdbHelper.getLastId()
+            if (fieldconditions()) {
+                SVCSMSSENDERID = smsdbHelper.getLastId()
 
-            // create a sms model using UI information
-            val smsModel: SMSModel = SMSModel(
-                    SVCSMSSENDERID,
-                    edtxtNumber.text.toString(),
-                    edtxtText.text.toString(),
-                    popupCalendar.timeInMillis)
+                // create a sms model using UI information
+                val smsModel: SMSModel = SMSModel(
+                        SVCSMSSENDERID,
+                        edtxtNumber.text.toString(),
+                        edtxtText.text.toString(),
+                        popupCalendar.timeInMillis)
 
-            // create a new planned sms trough the sms planner
-            setNewPlannedSMS(this, smsModel)
+                // create a new planned sms trough the sms planner
+                setNewPlannedSMS(this, smsModel)
 
-            val intent = Intent(this, ListViewActivity::class.java)
-            startActivity(intent)
+                val intent = Intent(this, ListViewActivity::class.java)
+                startActivity(intent)
+            }
 
-        }
-
-        btnChangeView.setOnClickListener {
-            val intent = Intent(this, ListViewActivity::class.java)
-            startActivity(intent)
         }
 
         btnSearch.setOnClickListener {
@@ -91,6 +86,22 @@ class SMSCreationActivity : AppCompatActivity() {
         }
 
         //setupWIFIBroadcast()
+    }
+
+    /**
+     * this function is called when the user click on the validate button
+     * it is used to prevent the creation of an sms model
+     * with problematic/absent data
+     */
+    private fun fieldconditions(): Boolean {
+
+        var isNumberNotEmpy: Boolean = edtxtNumber.text.toString().length > 0
+        var isTextNotEmpy: Boolean = edtxtText.text.toString().length > 0
+
+        var isDateInFuture: Boolean = popupCalendar.timeInMillis > System.currentTimeMillis()
+
+
+        return isNumberNotEmpy && isTextNotEmpy && isDateInFuture
     }
 
     private fun setupWIFIBroadcast() {
@@ -111,7 +122,7 @@ class SMSCreationActivity : AppCompatActivity() {
         }
 
 
-        tvTest.setText(out)
+        tvError.setText(out)
     }
 
     public override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent) {

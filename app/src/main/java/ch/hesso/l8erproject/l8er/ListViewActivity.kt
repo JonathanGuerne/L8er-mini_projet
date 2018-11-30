@@ -97,6 +97,7 @@ class ListViewActivity : AppCompatActivity() {
     override fun onResume() {
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 updateDBEventReceiver,  IntentFilter(updateDBIntentName));
+        refresh(null)
         super.onResume();
     }
 

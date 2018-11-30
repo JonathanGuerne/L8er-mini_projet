@@ -15,12 +15,6 @@
         android:orientation="vertical">
 
 
-        <Button
-            android:id="@+id/btnChangeView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Change View" />
-
         <TextView
             android:id="@+id/txtviewWho"
             android:layout_width="wrap_content"
@@ -55,8 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:ems="10"
-                android:inputType="phone"
-                android:text="0786656369" />
+                android:inputType="phone" />
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btnSearch"
@@ -131,8 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="textMultiLine"
-                android:text="Hello world !" />
+                android:inputType="textMultiLine" />
 
         </LinearLayout>
 
@@ -154,21 +146,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
-            <Button
-                android:id="@+id/btnCancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cancel"
-                android:textSize="28dp" />
-
         </LinearLayout>
 
         <TextView
-            android:id="@+id/tvTest"
+            android:id="@+id/tvError"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Test display"
             android:textSize="16dp" />
 
 
