@@ -64,5 +64,9 @@ class ListViewActivity : AppCompatActivity() {
             itemTouchHelper2.attachToRecyclerView(this)
         }
 
+        btnNewSMS.setOnClickListener {
+            Log.d("BTNNEWSMS","CLICKED")
+        }
+
     }
 }
