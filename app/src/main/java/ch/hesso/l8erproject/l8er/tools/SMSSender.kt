@@ -1,12 +1,23 @@
 package ch.hesso.l8erproject.l8er.tools
 
 import android.content.Context
+import android.content.Intent
+import android.support.v4.content.LocalBroadcastManager
 import android.telephony.SmsManager
 import android.widget.Toast
 
-fun sendSMS(context: Context,number: String,text: String) {
+val updateDBIntentName = "DB-UPDATE"
+
+fun sendSMS(context: Context, smsId: Int, number: String, text: String) {
     SmsManager.getDefault().sendTextMessage(number, null, text, null, null)
+    val smsDBHelper = SMSDBHelper(context)
+    smsDBHelper.deleteSMS(smsId)
     Toast.makeText(context, "sms sent.", Toast.LENGTH_SHORT).show()
+
+    val intent: Intent = Intent(updateDBIntentName)
+    intent.putExtra("event","remove sms $smsId from db")
+
+    LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
 }
 
 //private fun contact(){

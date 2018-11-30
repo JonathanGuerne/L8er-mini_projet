@@ -146,7 +146,7 @@
                 android:id="@+id/btnTmr"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Start timer"
+                android:text="@string/btn_validate"
                 android:textSize="28dp" />
 
             <Space

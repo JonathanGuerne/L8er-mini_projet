@@ -49,16 +49,12 @@ class SMSCreationActivity : AppCompatActivity() {
         
         //test()
 
-        //use this line to "reboot" the db. CAUTION this will earse all the content
-        //val smsDBHelper: SMSDBHelper = SMSDBHelper(this)
-        //smsDBHelper.onUpgrade(smsDBHelper.writableDatabase,0,1)
-
         // will check if permission are granted, if not will ask the user
         checkPermission()
 
-        btnCancel.setOnClickListener {
-            deleteAlarm()
-        }
+//        btnCancel.setOnClickListener {
+//            deleteAlarm()
+//        }
 
 
         setUpHourEditText()
@@ -75,8 +71,11 @@ class SMSCreationActivity : AppCompatActivity() {
                     edtxtText.text.toString(),
                     popupCalendar.timeInMillis)
 
-            // set an alarm trough the sms planner
+            // create a new planned sms trough the sms planner
             setNewPlannedSMS(this, smsModel)
+
+            val intent = Intent(this, ListViewActivity::class.java)
+            startActivity(intent)
 
         }
 
@@ -230,19 +229,19 @@ class SMSCreationActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * delete a specific alarm
-     * TODO: change the code to take an smsid in parameter.
-     * TODO: Move the code to the smsPlanner script ?
-     */
-    private fun deleteAlarm() {
-
-        val am: AlarmManager? = getSystemService(Context.ALARM_SERVICE) as? AlarmManager
-        val cancelIntent = Intent(this, SMSSenderBroadcastReceiver::class.java)
-        val cancelPendingIntent = PendingIntent.getBroadcast(this, SVCSMSSENDERID, cancelIntent, 0)
-
-        am!!.cancel(cancelPendingIntent)
-    }
+//    /**
+//     * delete a specific alarm
+//     * TODO: change the code to take an smsid in parameter.
+//     * TODO: Move the code to the smsPlanner script ?
+//     */
+//    private fun deleteAlarm() {
+//
+//        val am: AlarmManager? = getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+//        val cancelIntent = Intent(this, SMSSenderBroadcastReceiver::class.java)
+//        val cancelPendingIntent = PendingIntent.getBroadcast(this, SVCSMSSENDERID, cancelIntent, 0)
+//
+//        am!!.cancel(cancelPendingIntent)
+//    }
 
 
     private fun closeNow() {
