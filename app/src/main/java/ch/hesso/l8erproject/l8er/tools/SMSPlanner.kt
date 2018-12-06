@@ -21,7 +21,7 @@ fun setNewPlannedSMS(context: Context, smsModel: SMSModel, newSms: Boolean = tru
 
     //debug
     var tr = smsModel.date - System.currentTimeMillis()
-    Log.d("SMS-sender", "Time remaining $tr")
+    Log.d("SMS-sender", "Time remaining : "+smsModel.date)
 
     //use alarm manager to plan a broadcast event
     planSMS(context, pIntent, smsModel.date, newSms)
