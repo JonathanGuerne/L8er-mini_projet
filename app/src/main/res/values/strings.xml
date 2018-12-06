@@ -9,4 +9,5 @@
     <string name="when">WHEN ?</string>
     <string name="what">WHAT ?</string>
     <string name="search">SEARCH</string>
+    <string name="btn_validate">Validate</string>
 </resources>

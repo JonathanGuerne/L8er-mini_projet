@@ -13,8 +13,9 @@ fun setNewPlannedSMS(context: Context, smsModel: SMSModel, newSms: Boolean = tru
 
     val number = smsModel.receiver
     val text_content = smsModel.content
+    val smsId = smsModel.smsid
 
-    val intent = getBroadcastIntent(context, number, text_content)
+    val intent = getBroadcastIntent(context, smsId, number, text_content)
     val pIntent = PendingIntent.getBroadcast(context, smsModel.smsid, intent,
             PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -39,10 +40,11 @@ fun setNewPlannedSMS(context: Context, smsModel: SMSModel, newSms: Boolean = tru
 /**
  * simply create an Intent with specifics parameters
  */
-private fun getBroadcastIntent(context: Context, number: String, textContent: String): Intent {
+private fun getBroadcastIntent(context: Context,smsId: Int, number: String, textContent: String): Intent {
     val intent = Intent(context, SMSSenderBroadcastReceiver::class.java)
     intent.putExtra("number", number)
     intent.putExtra("textContent", textContent)
+    intent.putExtra("smsId",smsId)
     return intent
 }
 
@@ -55,7 +57,7 @@ private fun planSMS(context: Context, pIntent: PendingIntent, date: Long, showTo
     if (am is AlarmManager) {
         am.set(AlarmManager.RTC, date, pIntent)
         if (showToast) {
-            Toast.makeText(context, "Alarm is set", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "SMS Planned", Toast.LENGTH_SHORT).show()
         }
     }
 }

@@ -71,15 +71,19 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
     @Throws(SQLiteConstraintException::class)
     fun deleteSMS(smsid: Int): Boolean {
 
-        val db = writableDatabase
+        if (!readSMS(smsid).isEmpty()) {
+            val db = writableDatabase
 
-        val selection = DBContract.SMSEntry.COL_ID + " LIKE ?"
+            val selection = DBContract.SMSEntry.COL_ID + " LIKE ?"
 
-        val selectionArgs = arrayOf(smsid.toString())
+            val selectionArgs = arrayOf(smsid.toString())
 
-        db.delete(DBContract.SMSEntry.TABLE_NAME, selection, selectionArgs)
+            db.delete(DBContract.SMSEntry.TABLE_NAME, selection, selectionArgs)
 
-        return true
+            return true
+        }
+        
+        return false
     }
 
 
