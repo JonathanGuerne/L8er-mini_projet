@@ -42,7 +42,7 @@ class SMSCreationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        
+
         //test()
 
         // will check if permission are granted, if not will ask the user

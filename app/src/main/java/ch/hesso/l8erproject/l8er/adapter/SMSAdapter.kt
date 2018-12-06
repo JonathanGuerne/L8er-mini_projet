@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,7 @@ class SMSAdapter(private val smsArray: ArrayList<SMSModel>) : RecyclerView.Adapt
     fun restoreItem(sms: SMSModel, list_view: View, context: Context) {
         val snackbar = Snackbar.make(list_view, "removed " + sms.smsid + " from cart!", Snackbar.LENGTH_LONG)
         snackbar.setAction("UNDO", View.OnClickListener {
+            Log.d("SMS-undo", ""+sms.date)
             smsArray.add(sms)
             setNewPlannedSMS(context, sms, true)
             notifyItemInserted(smsArray.size)
@@ -42,6 +44,8 @@ class SMSAdapter(private val smsArray: ArrayList<SMSModel>) : RecyclerView.Adapt
     }
 
     fun updateItem(position: Int, sms: SMSModel){
+        Log.d("SMS-edit", "Try to edit an SMS")
+
         notifyItemChanged(position)
     }
 

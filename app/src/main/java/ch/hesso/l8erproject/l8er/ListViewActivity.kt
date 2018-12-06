@@ -75,7 +75,6 @@ class ListViewActivity : AppCompatActivity() {
 
                     if (direction == ItemTouchHelper.RIGHT){
                         adapter_SMS.updateItem(viewHolder.adapterPosition, sms)
-
                     }
                 }
             }
