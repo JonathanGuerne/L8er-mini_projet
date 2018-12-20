@@ -1,8 +1,10 @@
 package ch.hesso.l8erproject.l8er.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import ch.hesso.l8erproject.l8er.R
+import ch.hesso.l8erproject.l8er.SMSCreationActivity
 import ch.hesso.l8erproject.l8er.models.SMSModel
 import ch.hesso.l8erproject.l8er.tools.SMSDBHelper
 import ch.hesso.l8erproject.l8er.tools.deletePlannedSMS
@@ -31,21 +34,18 @@ class SMSAdapter(private val smsArray: ArrayList<SMSModel>) : RecyclerView.Adapt
         holder.sms_content.text = content
     }
 
-    fun restoreItem(sms: SMSModel, list_view: View, context: Context) {
+    fun restoreItem(sms: SMSModel, list_view: View, context: Context, position: Int) {
         val snackbar = Snackbar.make(list_view, "removed " + sms.smsid + " from cart!", Snackbar.LENGTH_LONG)
         snackbar.setAction("UNDO", View.OnClickListener {
-            Log.d("SMS-undo", ""+sms.date)
-            smsArray.add(sms)
+            smsArray.add(position, sms)
             setNewPlannedSMS(context, sms, true)
-            notifyItemInserted(smsArray.size)
+            notifyItemInserted(position)
         })
         snackbar.setActionTextColor(Color.YELLOW)
         snackbar.show()
     }
 
-    fun updateItem(position: Int, sms: SMSModel){
-        Log.d("SMS-edit", "Try to edit an SMS")
-
+    fun updateItem(position: Int){
         notifyItemChanged(position)
     }
 

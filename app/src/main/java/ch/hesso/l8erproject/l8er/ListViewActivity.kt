@@ -22,7 +22,7 @@ import ch.hesso.l8erproject.l8er.tools.*
 class ListViewActivity : AppCompatActivity() {
 
     val listItems: ArrayList<SMSModel>  = ArrayList()
-    lateinit var smsDBHelper:  SMSDBHelper
+    lateinit var smsDBHelper: SMSDBHelper
     lateinit var adapter_SMS: SMSAdapter
 
     private val updateDBEventReceiver = object : BroadcastReceiver() {
@@ -37,52 +37,55 @@ class ListViewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_view)
 
-
         //use this line to "reboot" the db. CAUTION this will earse all the content
-//        val smsDBHelper_debug: SMSDBHelper = SMSDBHelper(this)
-//        smsDBHelper_debug.onUpgrade(smsDBHelper_debug.writableDatabase,0,1)
+        //val smsDBHelper_debug: SMSDBHelper = SMSDBHelper(this)
+        //smsDBHelper_debug.onUpgrade(smsDBHelper_debug.writableDatabase,0,1)
 
         //read the data
         smsDBHelper = SMSDBHelper(this)
+
         refresh(null)
-        
+
         sms_list_view.apply {
 
             adapter_SMS = SMSAdapter(listItems)
             val list_view = findViewById<RecyclerView>(R.id.sms_list_view)
 
-            layoutManager = LinearLayoutManager(this@ListViewActivity)
             adapter = adapter_SMS
+            layoutManager = LinearLayoutManager(this@ListViewActivity)
 
             addItemDecoration(DividerItemDecoration(this@ListViewActivity, DividerItemDecoration.VERTICAL))
 
-            val swipeHandler = object : SwipeToDelete(this@ListViewActivity) {
+            val swipeHandlerDelete = object : SwipeToDelete(this@ListViewActivity) {
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    val sms = listItems[viewHolder.adapterPosition]
+                    val position = viewHolder.adapterPosition
+                    val sms = listItems[position]
 
                     if (direction == ItemTouchHelper.LEFT){
-                        adapter_SMS.removeAt(viewHolder.adapterPosition)
+                        adapter_SMS.removeAt(position)
                         deletePlannedSMS(applicationContext, sms.smsid)
                         smsDBHelper.deleteSMS(sms.smsid)
-                        adapter_SMS.restoreItem(sms, list_view, applicationContext)
+                        adapter_SMS.restoreItem(sms, list_view, applicationContext, position)
                     }
                 }
             }
 
-            val swipeHandler2 = object : SwipeToEdit(this@ListViewActivity) {
+            val swipeHandlerEdit = object : SwipeToEdit(this@ListViewActivity) {
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                     val sms = listItems[viewHolder.adapterPosition]
 
                     if (direction == ItemTouchHelper.RIGHT){
-                        adapter_SMS.updateItem(viewHolder.adapterPosition, sms)
+                        //val intent = Intent(context, SMSCreationActivity::class.java)
+                        //intent.putExtra("UpdatedSms", sms)
+                        //startActivity(intent)
                     }
                 }
             }
 
-            val itemTouchHelper = ItemTouchHelper(swipeHandler)
-            val itemTouchHelper2 = ItemTouchHelper(swipeHandler2)
-            itemTouchHelper.attachToRecyclerView(this)
-            itemTouchHelper2.attachToRecyclerView(this)
+            val itemTouchHelperDelete = ItemTouchHelper(swipeHandlerDelete)
+            val itemTouchHelperEdit = ItemTouchHelper(swipeHandlerEdit)
+            itemTouchHelperDelete.attachToRecyclerView(this)
+            itemTouchHelperEdit.attachToRecyclerView(this)
         }
 
         btnNewSMS.setOnClickListener {
@@ -96,7 +99,7 @@ class ListViewActivity : AppCompatActivity() {
     override fun onResume() {
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 updateDBEventReceiver,  IntentFilter(updateDBIntentName));
-        super.onResume();
+        super.onResume()
     }
 
     override fun onPause() {
@@ -112,7 +115,6 @@ class ListViewActivity : AppCompatActivity() {
         listItems.clear()
         listItems.addAll(smsDBHelper.readAllSMS())
 
-        
         if (::adapter_SMS.isInitialized)
             adapter_SMS.notifyDataSetChanged()
     }

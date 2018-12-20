@@ -54,8 +54,19 @@ class SMSCreationActivity : AppCompatActivity() {
 
 //        btnCancel.setOnClickListener {
 //            deleteAlarm()
-//        }
+        //}
 
+        /*
+        val intent = getIntent()
+
+        if (intent.hasExtra("UpdatedSMS")){
+            val sms = intent.getExtras().getSerializable("UpdatedSms") as? SMSModel
+
+            if (sms != null){
+                popupCalendar.time = Date(sms.date)
+            }
+        }
+        */
 
         setUpHourEditText()
         setUpDateEditText()
@@ -76,7 +87,6 @@ class SMSCreationActivity : AppCompatActivity() {
 
             val intent = Intent(this, ListViewActivity::class.java)
             startActivity(intent)
-
         }
 
         btnChangeView.setOnClickListener {
@@ -171,9 +181,9 @@ class SMSCreationActivity : AppCompatActivity() {
     private fun setUpDateEditText() {
 
         val date = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            popupCalendar.set(Calendar.YEAR, year);
-            popupCalendar.set(Calendar.MONTH, monthOfYear);
-            popupCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            popupCalendar.set(Calendar.YEAR, year)
+            popupCalendar.set(Calendar.MONTH, monthOfYear)
+            popupCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
             val myFormat = "dd/MM/yy"
             val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
