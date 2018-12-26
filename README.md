@@ -64,6 +64,14 @@ L'application peut facilement s'abonner à ces signaux broadcast pour pouvoir, m
 
 ## Stockage dans la base de données
 
+Le système présenté dans le chapitre précédent a un point faible : les SMS planifiés seront supprimés si le téléphone est redémarré. Pour ne pas perdre ces SMS il faut mettre en place un système de persistance. 
+
+Chaque SMS est donc sauvegardée dans une base de données SQLite avant sont envoi. L'intérêt est finalement double : 
+1. Permettre la persistance des données entre les redémarrage de l'appareil
+2. Facilement récupérer les informations sur les SMS planifiés depuis l'UI. 
+
+le modèle de SMS créé dans la base de donnée est très simple. Il comprendre un **texte** de contenu, un **numéro** de destinataire, une **date** d'envoi et le **nom** du contact. Le nom du contact est exclusivement utilisé dans l'UI. 
+
 ## Affichage des SMS à la page d'accueil 
 
 
