@@ -72,6 +72,23 @@ Chaque SMS est donc sauvegardée dans une base de données SQLite avant sont env
 
 le modèle de SMS créé dans la base de donnée est très simple. Il comprendre un **texte** de contenu, un **numéro** de destinataire, une **date** d'envoi et le **nom** du contact. Le nom du contact est exclusivement utilisé dans l'UI. 
 
+Cependant stocker les SMS dans une base de données n'est pas suffisant pour qu'il se "replanifient" automatiquement quand le téléphone va redémarrer. Qui plus est il peut même être dangereux d'attendre que l'utilisateur ouvre l'application avant de replanifier les SMS. Il faut un système qui puissent automatiquement replanifier les SMS au démarrage de l'appareil sans même que l'utilisateur ait besoin d'ouvir l'application. 
+
+Cela est possible grâce au signal broadcast ```android.intent.action.BOOT_COMPLETED``` fournit par android et dont on peut s'abonner en ajoutant simplement les lignes nécessaires dans le manifest de son application. Ce signal, comme son nom l'indique, va être lancé que l'appareil aura complètement fini de démmarer. On pourra enusuit exécuter le code nécessaire à la récupération et l'envoi des SMS stockés dans la base de données. 
+
+```Kotlin
+    override fun onReceive(context: Context, intent: Intent) {
+        if ("android.intent.action.BOOT_COMPLETED" == intent.action) {
+            val smsDBHelper = SMSDBHelper(context)
+            val listSMS = smsDBHelper.readAllSMS()
+            listSMS.forEach {
+                Log.d("RestartedSMS", it.date.toString() + " " + it.receiver + " " + it.content)
+                setNewPlannedSMS(context, smsModel = it, newSms = false)
+            }
+        }
+    }
+```
+
 ## Affichage des SMS à la page d'accueil 
 
 
