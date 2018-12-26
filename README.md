@@ -33,7 +33,29 @@ C'est le rôle du script SMSPLanner, un script mit en place pour faciliter la pl
 fun setNewPlannedSMS(context: Context, smsModel: SMSModel, newSms: Boolean = true, update: Boolean = false)
 ```
 
-la seule fonction publique du script est cette fonction ```SetNewPlannedSMS```. Pernant en argument un ```SMSModel``` (voir **stockage dans la base de données**) elle va créer un pending intent content toutes les informations nécessaires à l'envoi du SMS et le transmettre à un ```AlarmManager```. Le but de l'```AlarmManager``` est de générer un intent à un moment précis. Ici, l'intent sera planifié pour la date souhaité de l'envoi du SMS. 
+la seule fonction publique du script est cette fonction ```SetNewPlannedSMS```. Pernant en argument un ```SMSModel``` (voir **stockage dans la base de données**) elle va créer un pending intent content toutes les informations nécessaires à l'envoi du SMS et le transmettre à un ```AlarmManager```.
+```Kotlin 
+private fun getBroadcastIntent(context: Context,smsId: Int, number: String, textContent: String): Intent {
+    val intent = Intent(context, SMSSenderBroadcastReceiver::class.java)
+    intent.putExtra("number", number)
+    intent.putExtra("textContent", textContent)
+    intent.putExtra("smsId",smsId)
+    return intent
+}
+```
+Le but de l'```AlarmManager``` est de générer un intent à un moment précis. Ici, l'intent sera planifié pour la date souhaité de l'envoi du SMS. 
+```Kotlin
+private fun planSMS(context: Context, pIntent: PendingIntent, date: Long, showToast: Boolean) {
+
+    val am = context.getSystemService(Context.ALARM_SERVICE)
+    if (am is AlarmManager) {
+        am.set(AlarmManager.RTC, date, pIntent)
+        if (showToast) {
+            Toast.makeText(context, "SMS Planned", Toast.LENGTH_SHORT).show()
+        }
+    }
+}
+```
 
 Plus précisément le pending intent est attaché à un broadcast intent. Donc quand l'alarm manager va lancer l'intent c'est en fait un signal broadcast qui sera transmit. 
 
