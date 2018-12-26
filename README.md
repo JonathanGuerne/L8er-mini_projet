@@ -23,6 +23,22 @@ SmsManager.getDefault().
 
 On pourrait également spécifier des intents à lancer en cas de succès/d'échec.
 
+## Planification d'un SMS
+
+Le capitre précédent présentait la marche à suivre pour l'envoi d'un SMS depuis android. Il reste encore à trouver un moyen de transmettre au téléphone un ordre pour envoyer ce SMS à une date précise. 
+
+C'est le rôle du script SMSPLanner, un script mit en place pour faciliter la planification des SMS depuis n'importe quel endroit dans le projet. 
+
+```Kotlin
+fun setNewPlannedSMS(context: Context, smsModel: SMSModel, newSms: Boolean = true, update: Boolean = false)
+```
+
+la seule fonction publique du script est cette fonction ```SetNewPlannedSMS```. Pernant en argument un ```SMSModel``` (voir **stockage dans la base de données**) elle va créer un pending intent content toutes les informations nécessaires à l'envoi du SMS et le transmettre à un ```AlarmManager```. Le but de l'```AlarmManager``` est de générer un intent à un moment précis. Ici, l'intent sera planifié pour la date souhaité de l'envoi du SMS. 
+
+Plus précisément le pending intent est attaché à un broadcast intent. Donc quand l'alarm manager va lancer l'intent c'est en fait un signal broadcast qui sera transmit. 
+
+L'application peut facilement s'abonner à ces signaux broadcast pour pouvoir, même si elle n'est pas au premier plan, gérer la logique nécessaire. 
+
 
 ## Stockage dans la base de données
 
