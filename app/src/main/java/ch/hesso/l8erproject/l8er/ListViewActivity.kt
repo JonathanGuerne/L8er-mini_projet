@@ -16,6 +16,8 @@ import ch.hesso.l8erproject.l8er.adapter.SMSAdapter
 import ch.hesso.l8erproject.l8er.models.SMSModel
 import ch.hesso.l8erproject.l8er.tools.*
 import kotlinx.android.synthetic.main.activity_list_view.*
+import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.LinearLayoutManager
 
 
 class ListViewActivity : AppCompatActivity() {
@@ -44,13 +46,13 @@ class ListViewActivity : AppCompatActivity() {
 
         //read the data
         smsDBHelper = SMSDBHelper(this)
-        refresh(null)
 
         sms_list_view.apply {
 
             adapter_SMS = SMSAdapter(listItems)
             val list_view = findViewById<RecyclerView>(R.id.sms_list_view)
 
+            layoutManager = LinearLayoutManager(this@ListViewActivity)
             adapter = adapter_SMS
 
             addItemDecoration(DividerItemDecoration(this@ListViewActivity, DividerItemDecoration.VERTICAL))
@@ -87,10 +89,17 @@ class ListViewActivity : AppCompatActivity() {
             itemTouchHelperEdit.attachToRecyclerView(this)
         }
 
+        refresh(null)
+
         btnNewSMS.setOnClickListener {
             Log.d("BTNNEWSMS", "CLICKED")
             val intent = Intent(this, SMSCreationActivity::class.java)
             startActivity(intent)
+        }
+
+        swipeContainer.setOnRefreshListener {
+            refresh(null)
+            swipeContainer.setRefreshing(false)
         }
 
     }
@@ -115,6 +124,7 @@ class ListViewActivity : AppCompatActivity() {
         listItems.clear()
         listItems.addAll(smsDBHelper.readAllSMS())
 
+        
 
         if (::adapter_SMS.isInitialized)
             adapter_SMS.notifyDataSetChanged()
