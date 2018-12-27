@@ -31,7 +31,8 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
                         DBContract.SMSEntry.COL_REC + " TEXT," +
                         DBContract.SMSEntry.COL_REC_NAME + " TEXT," +
                         DBContract.SMSEntry.COL_CON + " TEXT," +
-                        DBContract.SMSEntry.COL_DATE + " INTEGER)"
+                        DBContract.SMSEntry.COL_DATE + " INTEGER," +
+                        DBContract.SMSEntry.COL_INT + " INTEGER)"
 
         private val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + DBContract.SMSEntry.TABLE_NAME
 
@@ -64,6 +65,7 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
         values.put(DBContract.SMSEntry.COL_REC_NAME, sms.receiver_name)
         values.put(DBContract.SMSEntry.COL_CON, sms.content)
         values.put(DBContract.SMSEntry.COL_DATE, sms.date)
+        values.put(DBContract.SMSEntry.COL_INT, sms.interval)
 
         Log.d("SMS-sender", "values : $values")
 
@@ -87,7 +89,7 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
 
             return true
         }
-        
+
         return false
     }
 
@@ -110,6 +112,7 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
         var receiver_name: String
         var content: String
         var date: Long
+        var interval: Long
 
         if (cursor!!.moveToFirst()) {
             while (cursor.isAfterLast == false) {
@@ -117,8 +120,9 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
                 receiver_name = cursor.getString(cursor.getColumnIndex(DBContract.SMSEntry.COL_REC_NAME))
                 content = cursor.getString(cursor.getColumnIndex(DBContract.SMSEntry.COL_CON))
                 date = cursor.getLong(cursor.getColumnIndex(DBContract.SMSEntry.COL_DATE))
+                interval = cursor.getLong(cursor.getColumnIndex(DBContract.SMSEntry.COL_INT))
 
-                listSMS.add(SMSModel(smsid, receiver, receiver_name, content, date))
+                listSMS.add(SMSModel(smsid, receiver, receiver_name, content, date, interval))
                 cursor.moveToNext()
             }
         }
@@ -171,6 +175,8 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
         var receiver_name: String
         var content: String
         var date: Long
+        var interval: Long
+
         if (cursor!!.moveToFirst()) {
             while (cursor.isAfterLast == false) {
                 smsid = cursor.getInt(cursor.getColumnIndex(DBContract.SMSEntry.COL_ID))
@@ -178,8 +184,9 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
                 receiver_name = cursor.getString(cursor.getColumnIndex(DBContract.SMSEntry.COL_REC_NAME))
                 content = cursor.getString(cursor.getColumnIndex(DBContract.SMSEntry.COL_CON))
                 date = cursor.getLong(cursor.getColumnIndex(DBContract.SMSEntry.COL_DATE))
+                interval = cursor.getLong(cursor.getColumnIndex(DBContract.SMSEntry.COL_INT))
 
-                listSMS.add(SMSModel(smsid, receiver, receiver_name, content, date))
+                listSMS.add(SMSModel(smsid, receiver, receiver_name, content, date, interval))
                 cursor.moveToNext()
             }
         }

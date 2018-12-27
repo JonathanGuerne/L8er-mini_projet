@@ -19,24 +19,23 @@ import java.util.*
 import android.provider.ContactsContract
 import android.app.Activity
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import ch.hesso.l8erproject.l8er.tools.PermissionHandler
+import kotlin.collections.ArrayList
 
 
-class SMSCreationActivity : AppCompatActivity() {
-
-    //value needed to get back te result when asking for specific user permission
-    private val RequestCodeSendSMS = 2
-    private val RequestCodeReadContact = 3
-
-    // value use to identify the broadcast intent linked to a specific planned sms
-    // TODO change this value to be increment at the creation of a new sms. But we should always be able to delete a plan sms first
-    private var SVCSMSSENDERID = 0
+class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private val popupCalendar = Calendar.getInstance()
-
     private val smsdbHelper = SMSDBHelper(this)
-
     private val PICK_CONTACT = 10
+
+    private lateinit var spinnerArrayName: Array<String>
+    private lateinit var spinnerArrayValue: Array<Long>
+
+    private var choosenIntervalValue: Long = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,17 +60,29 @@ class SMSCreationActivity : AppCompatActivity() {
         setUpHourEditText()
         setUpDateEditText()
 
+        populateSpinnerArray()
+        setUpIntervalSpinner()
+
         btnTmr.setOnClickListener {
 
             if (fieldconditions()) {
 
                 // create a sms model using UI information
+
+                var interval: Long = -1
+
+                if (cbInterval.isChecked) {
+                    //TODO change this to get real interval
+                    interval = choosenIntervalValue
+                }
+
                 val smsModel: SMSModel = SMSModel(
                         smsdbHelper.getLastId(),
                         edtxtNumber.text.toString(),
                         txtviewName.text.toString(),
                         edtxtText.text.toString(),
-                        popupCalendar.timeInMillis)
+                        popupCalendar.timeInMillis,
+                        interval)
 
                 // create a new planned sms trough the sms planner
                 setNewPlannedSMS(this, smsModel)
@@ -86,6 +97,15 @@ class SMSCreationActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
             intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE)
             startActivityForResult(intent, PICK_CONTACT);
+        }
+
+
+        cbInterval.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                spinnerIntervals.visibility = View.VISIBLE
+            } else {
+                spinnerIntervals.visibility = View.GONE
+            }
         }
 
     }
@@ -138,7 +158,6 @@ class SMSCreationActivity : AppCompatActivity() {
             }
         }
     }
-
 
     private fun setUpHourEditText() {
 
@@ -196,8 +215,51 @@ class SMSCreationActivity : AppCompatActivity() {
 
     }
 
+
+    private fun populateSpinnerArray() {
+
+        val nameDay = resources.getString(R.string.interval_day)
+        val valueDay = 86400000.toLong()
+
+        val nameWeek = resources.getString(R.string.interval_week)
+        val valueWeek = 604800000.toLong()
+
+        val nameWeek2 = resources.getString(R.string.interval_week)
+        val valueWeek2 = (604800000 * 2).toLong()
+
+        val nameMonth = resources.getString(R.string.interval_month)
+        val valueMonth = 2678400000.toLong()
+
+        val nameYear = resources.getString(R.string.interval_year)
+        val valueYear = 31536000000.toLong()
+
+
+        spinnerArrayName = arrayOf(nameDay, nameWeek, nameWeek2, nameMonth, nameYear)
+        spinnerArrayValue = arrayOf(valueDay, valueWeek, valueWeek2, valueMonth, valueYear)
+
+        choosenIntervalValue = spinnerArrayValue[0]
+    }
+
+    private fun setUpIntervalSpinner() {
+        spinnerIntervals!!.setOnItemSelectedListener(this)
+
+        // Create an ArrayAdapter using a simple spinner layout and languages array
+        val aa = ArrayAdapter(this, android.R.layout.simple_spinner_item, spinnerArrayName)
+        // Set layout to use when the list of choices appear
+        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        // Set Adapter to Spinner
+        spinnerIntervals!!.setAdapter(aa)
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        choosenIntervalValue = spinnerArrayValue[position]
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        PermissionHandler.checkPermissionResult(this,requestCode,grantResults)
+        PermissionHandler.checkPermissionResult(this, requestCode, grantResults)
     }
 
 }

@@ -42,7 +42,7 @@ class ListViewActivity : AppCompatActivity() {
 
         //use this line to "reboot" the db. CAUTION this will earse all the content
 //        val smsDBHelper_debug: SMSDBHelper = SMSDBHelper(this)
-//        smsDBHelper_debug.onUpgrade(smsDBHelper_debug.writableDatabase,0,1)
+//        smsDBHelper_debug.onUpgrade(smsDBHelper_debug.writableDatabase,2,3)
 
         //read the data
         smsDBHelper = SMSDBHelper(this)
