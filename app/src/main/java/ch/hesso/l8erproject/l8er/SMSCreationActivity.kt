@@ -3,7 +3,6 @@ package ch.hesso.l8erproject.l8er
 import android.Manifest
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -19,10 +18,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.provider.ContactsContract
 import android.app.Activity
-import android.net.wifi.WifiConfiguration
-import android.net.wifi.WifiManager
 import android.util.Log
-import android.content.IntentFilter
+import ch.hesso.l8erproject.l8er.tools.PermissionHandler
 
 
 class SMSCreationActivity : AppCompatActivity() {
@@ -31,22 +28,35 @@ class SMSCreationActivity : AppCompatActivity() {
     private val RequestCodeSendSMS = 2
     private val RequestCodeReadContact = 3
 
+    // value use to identify the broadcast intent linked to a specific planned sms
+    // TODO change this value to be increment at the creation of a new sms. But we should always be able to delete a plan sms first
+    private var SVCSMSSENDERID = 0
 
     private val popupCalendar = Calendar.getInstance()
 
     private val smsdbHelper = SMSDBHelper(this)
 
-    // intent code use to lauch the contact activity for result
     private val PICK_CONTACT = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //test()
 
         // will check if permission are granted, if not will ask the user
-        checkPermission()
+        PermissionHandler.checkPersmission(this)
+
+        /*
+        val intent = getIntent()
+
+        if (intent.hasExtra("UpdatedSMS")){
+            val sms = intent.getExtras().getSerializable("UpdatedSms") as? SMSModel
+
+            if (sms != null){
+                popupCalendar.time = Date(sms.date)
+            }
+        }
+        */
 
         setUpHourEditText()
         setUpDateEditText()
@@ -78,7 +88,12 @@ class SMSCreationActivity : AppCompatActivity() {
             startActivityForResult(intent, PICK_CONTACT);
         }
 
-        //setupWIFIBroadcast()
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        PermissionHandler.checkPersmission(this)
     }
 
     /**
@@ -97,27 +112,6 @@ class SMSCreationActivity : AppCompatActivity() {
 
 
         return isNumberNotEmpy && isTextNotEmpy && isDateInFuture
-    }
-
-    private fun setupWIFIBroadcast() {
-        val broadcastReceiver = WifiBroadcastReceiver()
-
-        val intentFilter = IntentFilter()
-        intentFilter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION)
-        this.registerReceiver(broadcastReceiver, intentFilter)
-    }
-
-    private fun test() {
-        val wifiManager = getApplicationContext().getSystemService(Context.WIFI_SERVICE) as WifiManager
-
-        var out = ""
-
-        for (wifi: WifiConfiguration in wifiManager.configuredNetworks){
-              out += wifi.SSID+"\n"
-        }
-
-
-        tvError.setText(out)
     }
 
     public override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent) {
@@ -202,46 +196,8 @@ class SMSCreationActivity : AppCompatActivity() {
 
     }
 
-
-    /**
-     * will check if permission are granted, if not will ask the user
-     * results are send to onRequestPermissionsResult()
-     */
-    private fun checkPermission() {
-
-        val smsPerm = ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
-        val contactPerm = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
-
-        if (contactPerm != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_CONTACTS), RequestCodeReadContact)
-        }
-
-        if (smsPerm != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.SEND_SMS), RequestCodeSendSMS)
-        }
-    }
-
-    /**
-     * handle permission request results
-     */
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            RequestCodeSendSMS, RequestCodeReadContact -> if (grantResults.isNotEmpty()) {
-                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, R.string.permission_not_granted, Toast.LENGTH_SHORT).show()
-                    closeNow()
-                }
-            }
-        }
-    }
-
-
-    private fun closeNow() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            finishAffinity()
-        } else {
-            finish()
-        }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        PermissionHandler.checkPermissionResult(this,requestCode,grantResults)
     }
 
 }

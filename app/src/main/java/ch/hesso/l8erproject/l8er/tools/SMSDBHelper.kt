@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import android.telephony.SmsManager
+import android.util.Log
 import ch.hesso.l8erproject.l8er.models.DBContract
 import ch.hesso.l8erproject.l8er.models.SMSModel
 import kotlin.system.exitProcess
@@ -63,6 +64,8 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
         values.put(DBContract.SMSEntry.COL_REC_NAME, sms.receiver_name)
         values.put(DBContract.SMSEntry.COL_CON, sms.content)
         values.put(DBContract.SMSEntry.COL_DATE, sms.date)
+
+        Log.d("SMS-sender", "values : $values")
 
         LAST_ID = db.insert(DBContract.SMSEntry.TABLE_NAME, null, values)
 
@@ -170,16 +173,17 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
         var date: Long
         if (cursor!!.moveToFirst()) {
             while (cursor.isAfterLast == false) {
-                smsid = cursor.getString(cursor.getColumnIndex(DBContract.SMSEntry.COL_ID)).toInt()
+                smsid = cursor.getInt(cursor.getColumnIndex(DBContract.SMSEntry.COL_ID))
                 receiver = cursor.getString(cursor.getColumnIndex(DBContract.SMSEntry.COL_REC))
                 receiver_name = cursor.getString(cursor.getColumnIndex(DBContract.SMSEntry.COL_REC_NAME))
                 content = cursor.getString(cursor.getColumnIndex(DBContract.SMSEntry.COL_CON))
-                date = cursor.getLong(cursor.getColumnIndex(DBContract.SMSEntry.COL_CON))
+                date = cursor.getLong(cursor.getColumnIndex(DBContract.SMSEntry.COL_DATE))
 
                 listSMS.add(SMSModel(smsid, receiver, receiver_name, content, date))
                 cursor.moveToNext()
             }
         }
+
         return listSMS
     }
 
