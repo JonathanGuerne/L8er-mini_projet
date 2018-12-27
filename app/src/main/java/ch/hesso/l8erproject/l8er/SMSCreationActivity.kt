@@ -48,7 +48,6 @@ class SMSCreationActivity : AppCompatActivity() {
         // will check if permission are granted, if not will ask the user
         checkPermission()
 
-
         setUpHourEditText()
         setUpDateEditText()
 
@@ -60,6 +59,7 @@ class SMSCreationActivity : AppCompatActivity() {
                 val smsModel: SMSModel = SMSModel(
                         smsdbHelper.getLastId(),
                         edtxtNumber.text.toString(),
+                        txtviewName.text.toString(),
                         edtxtText.text.toString(),
                         popupCalendar.timeInMillis)
 

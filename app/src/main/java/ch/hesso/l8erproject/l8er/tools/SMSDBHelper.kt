@@ -28,6 +28,7 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
                 "CREATE TABLE " + DBContract.SMSEntry.TABLE_NAME + " (" +
                         DBContract.SMSEntry.COL_ID + " INTEGER PRIMARY KEY," +
                         DBContract.SMSEntry.COL_REC + " TEXT," +
+                        DBContract.SMSEntry.COL_REC_NAME + " TEXT," +
                         DBContract.SMSEntry.COL_CON + " TEXT," +
                         DBContract.SMSEntry.COL_DATE + " INTEGER)"
 
@@ -59,6 +60,7 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
 
         values.put(DBContract.SMSEntry.COL_ID, sms.smsid)
         values.put(DBContract.SMSEntry.COL_REC, sms.receiver)
+        values.put(DBContract.SMSEntry.COL_REC_NAME, sms.receiver_name)
         values.put(DBContract.SMSEntry.COL_CON, sms.content)
         values.put(DBContract.SMSEntry.COL_DATE, sms.date)
 
@@ -102,16 +104,18 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
 
 
         var receiver: String
+        var receiver_name: String
         var content: String
         var date: Long
 
         if (cursor!!.moveToFirst()) {
             while (cursor.isAfterLast == false) {
                 receiver = cursor.getString(cursor.getColumnIndex(DBContract.SMSEntry.COL_REC))
+                receiver_name = cursor.getString(cursor.getColumnIndex(DBContract.SMSEntry.COL_REC_NAME))
                 content = cursor.getString(cursor.getColumnIndex(DBContract.SMSEntry.COL_CON))
                 date = cursor.getLong(cursor.getColumnIndex(DBContract.SMSEntry.COL_DATE))
 
-                listSMS.add(SMSModel(smsid, receiver, content, date))
+                listSMS.add(SMSModel(smsid, receiver, receiver_name, content, date))
                 cursor.moveToNext()
             }
         }
@@ -161,16 +165,18 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
 
         var smsid: Int
         var receiver: String
+        var receiver_name: String
         var content: String
         var date: Long
         if (cursor!!.moveToFirst()) {
             while (cursor.isAfterLast == false) {
                 smsid = cursor.getString(cursor.getColumnIndex(DBContract.SMSEntry.COL_ID)).toInt()
                 receiver = cursor.getString(cursor.getColumnIndex(DBContract.SMSEntry.COL_REC))
+                receiver_name = cursor.getString(cursor.getColumnIndex(DBContract.SMSEntry.COL_REC_NAME))
                 content = cursor.getString(cursor.getColumnIndex(DBContract.SMSEntry.COL_CON))
                 date = cursor.getLong(cursor.getColumnIndex(DBContract.SMSEntry.COL_CON))
 
-                listSMS.add(SMSModel(smsid, receiver, content, date))
+                listSMS.add(SMSModel(smsid, receiver, receiver_name, content, date))
                 cursor.moveToNext()
             }
         }

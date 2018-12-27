@@ -28,6 +28,7 @@ class SMSAdapter(private val smsArray: ArrayList<SMSModel>) : RecyclerView.Adapt
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val content = smsArray[position].content
         val contact = smsArray[position].receiver
+
         holder.sms_content.text = content
     }
 

@@ -14,6 +14,7 @@ object DBContract {
             val TABLE_NAME = "PROGRAMMED_SMS"
             val COL_ID = "id"
             val COL_REC = "receiver"
+            val COL_REC_NAME = "receiver_name"
             val COL_CON = "content"
             val COL_DATE = "date"
         }
