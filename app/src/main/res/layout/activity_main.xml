@@ -32,8 +32,7 @@
                 android:id="@+id/txtviewName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                />
+                android:layout_weight="2" />
 
         </LinearLayout>
 
@@ -45,18 +44,22 @@
 
             <EditText
                 android:id="@+id/edtxtNumber"
-                android:layout_width="0dp"
+                android:layout_width="179dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:ems="10"
                 android:inputType="phone" />
 
-            <android.support.v7.widget.AppCompatButton
+            <ImageButton
                 android:id="@+id/btnSearch"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/search" />
+                android:layout_weight="0"
+                android:layout_marginLeft="50dp"
+                android:padding="5dp"
+                android:src="@drawable/ic_search_black"
+                android:contentDescription="@string/search"
+                android:background="@drawable/rounded_button"/>
 
         </LinearLayout>
 
@@ -132,19 +135,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center">
 
-            <Button
+            <ImageButton
                 android:id="@+id/btnTmr"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/btn_validate"
-                android:textSize="28dp" />
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:padding="5dp"
+                android:layout_marginTop="5dp"
+                android:contentDescription="@string/btn_validate"
+                android:src="@drawable/ic_check_green"
+                android:background="@drawable/rounded_button"/>
 
         </LinearLayout>
 

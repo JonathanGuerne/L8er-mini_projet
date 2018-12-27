@@ -14,6 +14,7 @@ import java.util.*
 import android.provider.ContactsContract
 import android.app.Activity
 import android.util.Log
+import android.widget.ImageButton
 import ch.hesso.l8erproject.l8er.tools.PermissionHandler
 
 
@@ -38,6 +39,7 @@ class SMSCreationActivity : AppCompatActivity() {
         PermissionHandler.checkPersmission(this)
 
         val intent = getIntent()
+        val valid_button = findViewById<ImageButton>(R.id.btnTmr)
         var update = false
         var lastId = smsdbHelper.getLastId()
 
@@ -52,6 +54,7 @@ class SMSCreationActivity : AppCompatActivity() {
                 edtxtText.setText(sms.content)
                 lastId = sms.smsid
                 update = true
+                valid_button.setImageResource(R.drawable.ic_update_orange)
             }
         }
 

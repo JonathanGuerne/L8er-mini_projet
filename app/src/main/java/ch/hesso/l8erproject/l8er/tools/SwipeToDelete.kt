@@ -14,7 +14,7 @@ import ch.hesso.l8erproject.l8er.R
 
 abstract class SwipeToDelete(context: Context) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
-    private val deleteIcon = ContextCompat.getDrawable(context, R.drawable.ic_delete_white_24)
+    private val deleteIcon = ContextCompat.getDrawable(context, R.drawable.ic_delete_white)
     private val intrinsicWidth = deleteIcon.intrinsicWidth
     private val intrinsicHeight = deleteIcon.intrinsicHeight
     private val background = ColorDrawable()
