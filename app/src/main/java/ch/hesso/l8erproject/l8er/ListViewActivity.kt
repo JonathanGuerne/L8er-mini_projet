@@ -41,8 +41,8 @@ class ListViewActivity : AppCompatActivity() {
         PermissionHandler.checkPersmission(this)
 
         //use this line to "reboot" the db. CAUTION this will earse all the content
-//        val smsDBHelper_debug: SMSDBHelper = SMSDBHelper(this)
-//        smsDBHelper_debug.onUpgrade(smsDBHelper_debug.writableDatabase,0,1)
+        //val smsDBHelper_debug: SMSDBHelper = SMSDBHelper(this)
+        //smsDBHelper_debug.onUpgrade(smsDBHelper_debug.writableDatabase,0,1)
 
         //read the data
         smsDBHelper = SMSDBHelper(this)
@@ -76,9 +76,9 @@ class ListViewActivity : AppCompatActivity() {
                     val sms = listItems[viewHolder.adapterPosition]
 
                     if (direction == ItemTouchHelper.RIGHT) {
-                        //val intent = Intent(context, SMSCreationActivity::class.java)
-                        //intent.putExtra("UpdatedSms", sms)
-                        //startActivity(intent)
+                        val intent = Intent(context, SMSCreationActivity::class.java)
+                        intent.putExtra("UpdatedSms", sms)
+                        startActivity(intent)
                     }
                 }
             }
@@ -123,8 +123,6 @@ class ListViewActivity : AppCompatActivity() {
     fun refresh(view: View?) {
         listItems.clear()
         listItems.addAll(smsDBHelper.readAllSMS())
-
-        
 
         if (::adapter_SMS.isInitialized)
             adapter_SMS.notifyDataSetChanged()
