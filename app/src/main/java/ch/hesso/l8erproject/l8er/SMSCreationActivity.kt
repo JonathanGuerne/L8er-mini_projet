@@ -1,15 +1,10 @@
 package ch.hesso.l8erproject.l8er
 
-import android.Manifest
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
-import android.widget.Toast
 import ch.hesso.l8erproject.l8er.models.SMSModel
 import ch.hesso.l8erproject.l8er.tools.SMSDBHelper
 import ch.hesso.l8erproject.l8er.tools.setNewPlannedSMS
@@ -27,7 +22,6 @@ import kotlin.collections.ArrayList
 
 
 class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
-
     private val popupCalendar = Calendar.getInstance()
     private val smsdbHelper = SMSDBHelper(this)
     private val PICK_CONTACT = 10
@@ -41,21 +35,29 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         // will check if permission are granted, if not will ask the user
         PermissionHandler.checkPersmission(this)
 
-        /*
         val intent = getIntent()
+        var update = false
+        var lastId = smsdbHelper.getLastId()
 
-        if (intent.hasExtra("UpdatedSMS")){
-            val sms = intent.getExtras().getSerializable("UpdatedSms") as? SMSModel
+        if (intent.hasExtra("UpdatedSms")){
+            val sms = intent.getSerializableExtra("UpdatedSms") as? SMSModel
+
+            Log.d("Received-SMS", "${sms?.content}")
 
             if (sms != null){
                 popupCalendar.time = Date(sms.date)
+                edtxtNumber.setText(sms.receiver)
+                edtxtText.setText(sms.content)
+                lastId = sms.smsid
+                txtviewName.text = sms.receiver_name
+                update = true
             }
         }
-        */
+
+        val new = !update
 
         setUpHourEditText()
         setUpDateEditText()
@@ -77,7 +79,7 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
                 }
 
                 val smsModel: SMSModel = SMSModel(
-                        smsdbHelper.getLastId(),
+                        lastId,
                         edtxtNumber.text.toString(),
                         txtviewName.text.toString(),
                         edtxtText.text.toString(),
@@ -85,7 +87,7 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
                         interval)
 
                 // create a new planned sms trough the sms planner
-                setNewPlannedSMS(this, smsModel)
+                setNewPlannedSMS(this, smsModel, newSms = new, update = update)
 
                 val intent = Intent(this, ListViewActivity::class.java)
                 startActivity(intent)
@@ -127,7 +129,6 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
 
         var isNumberNotEmpy: Boolean = edtxtNumber.text.toString().length > 0
         var isTextNotEmpy: Boolean = edtxtText.text.toString().length > 0
-
         var isDateInFuture: Boolean = popupCalendar.timeInMillis > System.currentTimeMillis()
 
 

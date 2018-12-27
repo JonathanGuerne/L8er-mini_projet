@@ -23,7 +23,6 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
         // If you change the database schema, you must increment the database version.
         val DATABASE_VERSION = 1
         val DATABASE_NAME = "ProgrammedSMS.db"
-        var LAST_ID: Long = -1
 
         private val SQL_CREATE_ENTRIES =
                 "CREATE TABLE " + DBContract.SMSEntry.TABLE_NAME + " (" +
@@ -69,7 +68,7 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
 
         Log.d("SMS-sender", "values : $values")
 
-        LAST_ID = db.insert(DBContract.SMSEntry.TABLE_NAME, null, values)
+        db.insert(DBContract.SMSEntry.TABLE_NAME, null, values)
 
         return true
     }
@@ -129,34 +128,27 @@ class SMSDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
         return listSMS
     }
 
-    fun numberOfRow(): Int{
+    fun getLastId(): Int{
         val db = writableDatabase
         var cursor: Cursor? = null
         try {
-            cursor = db.rawQuery("select count(*) as c from " + DBContract.SMSEntry.TABLE_NAME, null)
+            cursor = db.rawQuery("select * from ${DBContract.SMSEntry.TABLE_NAME}" +
+                    " order by ${DBContract.SMSEntry.COL_ID} desc limit 1", null)
         } catch (e: SQLiteException) {
             db.execSQL(SQL_CREATE_ENTRIES)
             return -1
         }
 
-        var numberOfRow = 0
+        var smsid = 0
 
         if (cursor!!.moveToFirst()) {
             while (cursor.isAfterLast == false) {
-                numberOfRow = cursor.getString(cursor.getColumnIndex("c")).toInt()
+                smsid = cursor.getInt(cursor.getColumnIndex(DBContract.SMSEntry.COL_ID))
                 cursor.moveToNext()
             }
         }
 
-        return numberOfRow
-    }
-
-    fun getLastId(): Int{
-        if (LAST_ID < 0){
-            return numberOfRow()
-        }else{
-            return LAST_ID.toInt() + 1
-        }
+        return smsid + 1
     }
 
     fun readAllSMS(): ArrayList<SMSModel> {

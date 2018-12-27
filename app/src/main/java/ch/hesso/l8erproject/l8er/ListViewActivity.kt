@@ -76,9 +76,9 @@ class ListViewActivity : AppCompatActivity() {
                     val sms = listItems[viewHolder.adapterPosition]
 
                     if (direction == ItemTouchHelper.RIGHT) {
-                        //val intent = Intent(context, SMSCreationActivity::class.java)
-                        //intent.putExtra("UpdatedSms", sms)
-                        //startActivity(intent)
+                        val intent = Intent(context, SMSCreationActivity::class.java)
+                        intent.putExtra("UpdatedSms", sms)
+                        startActivity(intent)
                     }
                 }
             }
@@ -124,14 +124,12 @@ class ListViewActivity : AppCompatActivity() {
         listItems.clear()
         listItems.addAll(smsDBHelper.readAllSMS())
 
-        
-
         if (::adapter_SMS.isInitialized)
             adapter_SMS.notifyDataSetChanged()
     }
 
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        PermissionHandler.checkPermissionResult(this,requestCode,grantResults)
+        PermissionHandler.checkPermissionResult(this, requestCode, grantResults)
     }
 }
