@@ -14,7 +14,6 @@ import java.util.*
 import android.provider.ContactsContract
 import android.app.Activity
 import android.util.Log
-import android.widget.ImageButton
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -42,10 +41,11 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
         var update = false
         var lastId = smsdbHelper.getLastId()
 
+        populateSpinnerArray()
+        setUpIntervalSpinner()
+
         if (intent.hasExtra("UpdatedSms")){
             val sms = intent.getSerializableExtra("UpdatedSms") as? SMSModel
-
-            Log.d("Received-SMS", "${sms?.content}")
 
             if (sms != null){
                 popupCalendar.time = Date(sms.date)
@@ -54,15 +54,15 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
                 lastId = sms.smsid
                 txtviewName.text = sms.receiver_name
                 update = true
-                btnTmr.setImageResource(R.drawable.ic_update_orange)
-                btnTmr.setBackgroundResource(R.drawable.rounded_button_orange)
+                btnTmr.setImageResource(R.drawable.ic_update_white)
+                btnTmr.setBackgroundResource(R.drawable.ic_rounded_button_orange)
 
                 if (sms.interval > 0){
                     cbInterval.setChecked(true)
-                    val aa = spinnerIntervals.adapter
-
+                    val id = spinnerArrayValue.indices.find { i -> spinnerArrayValue[i] == sms.interval } ?: -1
+                    spinnerIntervals.visibility = View.VISIBLE
+                    spinnerIntervals.setSelection(id)
                 }
-
             }
         }
 
@@ -70,9 +70,6 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
 
         setUpHourEditText()
         setUpDateEditText()
-
-        populateSpinnerArray()
-        setUpIntervalSpinner()
 
         btnTmr.setOnClickListener {
 
@@ -117,7 +114,6 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
                 spinnerIntervals.visibility = View.GONE
             }
         }
-
     }
 
 
@@ -216,12 +212,10 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
                     popupCalendar.get(Calendar.DAY_OF_MONTH)).show()
         }
 
-
         val myFormat = "dd/MM/yy"
         val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
 
         edtxtDate.setText(sdf.format(popupCalendar.getTime()))
-
     }
 
 

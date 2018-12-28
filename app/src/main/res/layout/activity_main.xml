@@ -57,9 +57,9 @@
                 android:layout_weight="0"
                 android:layout_marginLeft="50dp"
                 android:padding="5dp"
-                android:src="@drawable/ic_search_black"
+                android:src="@drawable/ic_search_white"
                 android:contentDescription="@string/search"
-                android:background="@drawable/rounded_button_beige"/>
+                android:background="@drawable/ic_rounded_button_beige"/>
 
         </LinearLayout>
 
@@ -167,8 +167,8 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 android:contentDescription="@string/btn_validate"
-                android:src="@drawable/ic_check_green"
-                android:background="@drawable/rounded_button_green"/>
+                android:src="@drawable/ic_check_white"
+                android:background="@drawable/ic_rounded_button_green"/>
 
         </LinearLayout>
 
