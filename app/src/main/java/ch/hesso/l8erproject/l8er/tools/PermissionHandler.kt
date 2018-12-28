@@ -24,6 +24,7 @@ class PermissionHandler {
 
         val smsPerm = ActivityCompat.checkSelfPermission(activity, Manifest.permission.SEND_SMS)
         val contactPerm = ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_CONTACTS)
+        val locationPerm = ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
 
         var permissionToAsk = ArrayList<String>()
 
@@ -35,14 +36,16 @@ class PermissionHandler {
             permissionToAsk.add(Manifest.permission.SEND_SMS)
         }
 
+        if (locationPerm != PackageManager.PERMISSION_GRANTED) {
+            permissionToAsk.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+
         val array = arrayOfNulls<String>(permissionToAsk.size)
         permissionToAsk.toArray(array)
-
 
         if (!array.isEmpty())
             ActivityCompat.requestPermissions(activity, array, RequestAllPermissions)
     }
-
 
     /**
      * handle permission request results
@@ -58,7 +61,6 @@ class PermissionHandler {
         }
     }
 
-
     private fun closeNow(activity: Activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             finishAffinity(activity)
@@ -73,14 +75,11 @@ class PermissionHandler {
         var alreadyCalled = false
 
         fun checkPersmission(activity: Activity) {
-
             if (!alreadyCalled) {
                 alreadyCalled = true
                 instance.isPermissionGrantedAndAsk(activity)
             }
-
         }
-
 
         fun checkPermissionResult(activity: Activity, requestCode: Int, grantResults: IntArray) {
             instance.checkPermissionResultAndExit(activity, requestCode, grantResults)

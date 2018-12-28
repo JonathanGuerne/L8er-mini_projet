@@ -120,14 +120,32 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/edtxtText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:inputType="textMultiLine" />
+                <EditText
+                    android:id="@+id/edtxtText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxHeight="150dp"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:inputType="textMultiLine" />
+
+                <ImageButton
+                    android:id="@+id/btnGoogle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:layout_gravity="end"
+                    android:layout_marginRight="5dp"
+                    android:src="@drawable/ic_google"
+                    android:contentDescription="@string/google"
+                    android:background="@drawable/ic_rounded_button_google"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

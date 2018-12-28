@@ -9,6 +9,8 @@
     <string name="when">WHEN ?</string>
     <string name="what">WHAT ?</string>
     <string name="search">SEARCH</string>
+    <string name="google">Google Map</string>
+    <string name="google_localisation">$localisation</string>
     <string name="btn_validate">Validate</string>
     <string name="interval_txt">Send recurrent SMS</string>
     <string name="interval_day">Everyday</string>
