@@ -83,7 +83,7 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
                     interval = choosenIntervalValue
                 }
 
-                val smsModel: SMSModel = SMSModel(
+                val smsModel = SMSModel(
                         lastId,
                         edtxtNumber.text.toString(),
                         txtviewName.text.toString(),
@@ -97,7 +97,6 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
                 val intent = Intent(this, ListViewActivity::class.java)
                 startActivity(intent)
             }
-
         }
 
         btnSearch.setOnClickListener {
@@ -106,6 +105,9 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
             startActivityForResult(intent, PICK_CONTACT);
         }
 
+        btnGoogle.setOnClickListener {
+            edtxtText.setText(resources.getString(R.string.google_localisation))
+        }
 
         cbInterval.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
@@ -115,7 +117,6 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
             }
         }
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -149,15 +150,12 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
                 val phones = contentResolver.query(contactData!!, null,
                         null, null, null)
 
-
                 while (phones!!.moveToNext()) {
-
                     val name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
                     val phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
 
                     txtviewName.setText(name)
                     edtxtNumber.setText(phoneNumber)
-
                 }
                 phones.close()
             }
