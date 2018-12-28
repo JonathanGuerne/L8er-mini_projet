@@ -16,7 +16,9 @@ fun setNewPlannedSMS(context: Context, smsModel: SMSModel, newSms: Boolean = tru
     val text_content = smsModel.content
     val smsId = smsModel.smsid
 
-    val intent = getBroadcastIntent(context, smsId, number, text_content)
+    val gotInterval:Boolean = smsModel.interval >= 0
+
+    val intent = getBroadcastIntent(context, smsId, number, text_content, gotInterval)
 
     val pIntent = PendingIntent.getBroadcast(context, smsModel.smsid, intent,
             PendingIntent.FLAG_UPDATE_CURRENT)
@@ -42,11 +44,12 @@ fun setNewPlannedSMS(context: Context, smsModel: SMSModel, newSms: Boolean = tru
 /**
  * simply create an Intent with specifics parameters
  */
-private fun getBroadcastIntent(context: Context, smsId: Int, number: String, textContent: String): Intent {
+private fun getBroadcastIntent(context: Context, smsId: Int, number: String, textContent: String, gotInterval: Boolean): Intent {
     val intent = Intent(context, SMSSenderBroadcastReceiver::class.java)
     intent.putExtra("number", number)
     intent.putExtra("textContent", textContent)
     intent.putExtra("smsId", smsId)
+    intent.putExtra("gotInterval", gotInterval)
     return intent
 }
 
