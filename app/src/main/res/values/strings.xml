@@ -10,4 +10,10 @@
     <string name="what">WHAT ?</string>
     <string name="search">SEARCH</string>
     <string name="btn_validate">Validate</string>
+    <string name="interval_txt">Send recurrent SMS</string>
+    <string name="interval_day">Everyday</string>
+    <string name="interval_week">Every week</string>
+    <string name="interval_week_2">Every two weeks</string>
+    <string name="interval_month">Once per month</string>
+    <string name="interval_year">Once per year</string>
 </resources>

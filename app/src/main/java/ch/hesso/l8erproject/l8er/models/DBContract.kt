@@ -17,6 +17,7 @@ object DBContract {
             val COL_REC_NAME = "receiver_name"
             val COL_CON = "content"
             val COL_DATE = "date"
+            val COL_INT = "interval"
         }
     }
 

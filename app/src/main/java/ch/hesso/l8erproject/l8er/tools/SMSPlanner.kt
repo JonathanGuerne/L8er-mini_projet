@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.icu.util.DateInterval
 import android.util.Log
 import android.widget.Toast
 import ch.hesso.l8erproject.l8er.SMSSenderBroadcastReceiver
@@ -16,19 +17,24 @@ fun setNewPlannedSMS(context: Context, smsModel: SMSModel, newSms: Boolean = tru
     val smsId = smsModel.smsid
 
     val intent = getBroadcastIntent(context, smsId, number, text_content)
+
     val pIntent = PendingIntent.getBroadcast(context, smsModel.smsid, intent,
             PendingIntent.FLAG_UPDATE_CURRENT)
 
     //use alarm manager to plan a broadcast event
-    planSMS(context, pIntent, smsModel.date, newSms)
+    if (smsModel.interval >= 0) {
+        planSMS(context, pIntent, smsModel.date, smsModel.interval, newSms)
+    } else {
+        planSMS(context, pIntent, smsModel.date, newSms)
+    }
 
     //save to db if necessary
-    if (newSms && !update){
-        saveToDB(context,smsModel)
+    if (newSms && !update) {
+        saveToDB(context, smsModel)
     }
 
     //update to db
-    if (update && !newSms){
+    if (update && !newSms) {
         updatingDB(context, smsModel)
     }
 }
@@ -36,11 +42,11 @@ fun setNewPlannedSMS(context: Context, smsModel: SMSModel, newSms: Boolean = tru
 /**
  * simply create an Intent with specifics parameters
  */
-private fun getBroadcastIntent(context: Context,smsId: Int, number: String, textContent: String): Intent {
+private fun getBroadcastIntent(context: Context, smsId: Int, number: String, textContent: String): Intent {
     val intent = Intent(context, SMSSenderBroadcastReceiver::class.java)
     intent.putExtra("number", number)
     intent.putExtra("textContent", textContent)
-    intent.putExtra("smsId",smsId)
+    intent.putExtra("smsId", smsId)
     return intent
 }
 
@@ -52,6 +58,20 @@ private fun planSMS(context: Context, pIntent: PendingIntent, date: Long, showTo
     val am = context.getSystemService(Context.ALARM_SERVICE)
     if (am is AlarmManager) {
         am.set(AlarmManager.RTC, date, pIntent)
+        if (showToast) {
+            Toast.makeText(context, "SMS Planned", Toast.LENGTH_SHORT).show()
+        }
+    }
+}
+
+/**
+ * use teh alarm manager to plan an sms witch gonna repeat
+ */
+private fun planSMS(context: Context, pIntent: PendingIntent, date: Long, interval: Long, showToast: Boolean) {
+
+    val am = context.getSystemService(Context.ALARM_SERVICE)
+    if (am is AlarmManager) {
+        am.setRepeating(AlarmManager.RTC, date, interval, pIntent)
         if (showToast) {
             Toast.makeText(context, "SMS Planned", Toast.LENGTH_SHORT).show()
         }
@@ -71,7 +91,7 @@ fun deletePlannedSMS(context: Context, smsId: Int) {
     am!!.cancel(cancelPendingIntent)
 }
 
-fun updatingDB(context: Context, smsModel: SMSModel){
+fun updatingDB(context: Context, smsModel: SMSModel) {
     val smsDBHelper = SMSDBHelper(context)
 
     Log.d("UpdatingSMS", "sms updated to db")
@@ -81,7 +101,7 @@ fun updatingDB(context: Context, smsModel: SMSModel){
 
 /**
  * save sms to the db
- * TODO handle group 
+ * TODO handle group
  */
 private fun saveToDB(context: Context, smsModel: SMSModel) {
     val smsDBHelper = SMSDBHelper(context)

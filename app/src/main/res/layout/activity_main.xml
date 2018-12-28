@@ -59,7 +59,7 @@
                 android:padding="5dp"
                 android:src="@drawable/ic_search_black"
                 android:contentDescription="@string/search"
-                android:background="@drawable/rounded_button"/>
+                android:background="@drawable/rounded_button_beige"/>
 
         </LinearLayout>
 
@@ -135,6 +135,27 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <CheckBox
+                android:id="@+id/cbInterval"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/interval_txt" />
+
+            <Spinner
+                android:id="@+id/spinnerIntervals"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:orientation="horizontal"
             android:gravity="center">
 
@@ -144,9 +165,10 @@
                 android:layout_height="wrap_content"
                 android:padding="5dp"
                 android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:contentDescription="@string/btn_validate"
                 android:src="@drawable/ic_check_green"
-                android:background="@drawable/rounded_button"/>
+                android:background="@drawable/rounded_button_green"/>
 
         </LinearLayout>
 
