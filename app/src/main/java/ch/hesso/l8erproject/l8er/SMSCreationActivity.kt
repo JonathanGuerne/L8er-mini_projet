@@ -48,6 +48,7 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
             val sms = intent.getSerializableExtra("UpdatedSms") as? SMSModel
 
             if (sms != null){
+
                 popupCalendar.time = Date(sms.date)
                 edtxtNumber.setText(sms.receiver)
                 edtxtText.setText(sms.content)
@@ -79,7 +80,6 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
                 var interval: Long = -1
 
                 if (cbInterval.isChecked) {
-                    //TODO change this to get real interval
                     interval = choosenIntervalValue
                 }
 
@@ -140,13 +140,13 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
         return isNumberNotEmpy && isTextNotEmpy && isDateInFuture
     }
 
-    public override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent) {
+    public override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(reqCode, resultCode, data)
 
         when (reqCode) {
             PICK_CONTACT -> if (resultCode == Activity.RESULT_OK) {
-                Log.d("data-contact", data.data.toString())
-                val contactData = data.data
+                Log.d("data-contact", data!!.data.toString())
+                val contactData = data!!.data
                 val phones = contentResolver.query(contactData!!, null,
                         null, null, null)
 

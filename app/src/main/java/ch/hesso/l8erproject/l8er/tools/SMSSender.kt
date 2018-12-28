@@ -16,7 +16,7 @@ val updateDBIntentName = "DB-UPDATE"
 lateinit var locationManager: LocationManager
 var locationGPS : Location? = null
 
-fun sendSMS(context: Context, smsId: Int, number: String, text: String) {
+fun sendSMS(context: Context, smsId: Int, number: String, text: String, mustDelete: Boolean) {
     var new_text = text
 
     if (text.contains("\$localisation", ignoreCase = true)){
@@ -25,8 +25,13 @@ fun sendSMS(context: Context, smsId: Int, number: String, text: String) {
     }
 
     SmsManager.getDefault().sendTextMessage(number, null, new_text, null, null)
+
     val smsDBHelper = SMSDBHelper(context)
-    smsDBHelper.deleteSMS(smsId)
+
+    if (mustDelete) {
+        smsDBHelper.deleteSMS(smsId)
+    }
+    
     Toast.makeText(context, "sms sent.", Toast.LENGTH_SHORT).show()
 
     val intent: Intent = Intent(updateDBIntentName)
