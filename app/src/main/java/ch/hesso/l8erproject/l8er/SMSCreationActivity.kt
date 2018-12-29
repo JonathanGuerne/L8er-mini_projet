@@ -134,8 +134,7 @@ class SMSCreationActivity : AppCompatActivity(), AdapterView.OnItemSelectedListe
 
         var isNumberNotEmpy: Boolean = edtxtNumber.text.toString().length > 0
         var isTextNotEmpy: Boolean = edtxtText.text.toString().length > 0
-        var isDateInFuture: Boolean = popupCalendar.timeInMillis > System.currentTimeMillis()
-
+        var isDateInFuture: Boolean = popupCalendar.timeInMillis > System.currentTimeMillis() || cbInterval.isChecked
 
         return isNumberNotEmpy && isTextNotEmpy && isDateInFuture
     }

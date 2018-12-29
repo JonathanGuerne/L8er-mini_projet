@@ -26,16 +26,20 @@ class SMSAdapter(private val smsArray: ArrayList<SMSModel>) : RecyclerView.Adapt
     override fun getItemCount() = smsArray.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val interval_dict = mapOf(86400000.toLong() to "Every day", 604800000.toLong() to "Every week",
+                1209600000.toLong() to "Every two weeks", 2678400000 to "Every Month",
+                31536000000 to "Every year", -1 to "")
         val sms = smsArray[position]
         val content = sms.content
         val contact = if (sms.receiver_name == "") sms.receiver else sms.receiver_name
         val format = SimpleDateFormat("HH:mm dd/MM/yy")
         val date = format.format(Date(sms.date))
-
+        val recurrence = interval_dict[sms.interval]
+        val header = if (sms.interval < 0) contact else "$contact - $recurrence"
 
         holder.sms_content.text = content
         holder.date.text = date
-        holder.contact.text = contact
+        holder.contact.text = header
     }
 
     fun restoreItem(sms: SMSModel, list_view: View, context: Context, position: Int) {
