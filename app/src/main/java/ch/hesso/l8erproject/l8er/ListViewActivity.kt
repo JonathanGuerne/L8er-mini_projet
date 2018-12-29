@@ -41,8 +41,8 @@ class ListViewActivity : AppCompatActivity() {
         PermissionHandler.checkPersmission(this)
 
         //use this line to "reboot" the db. CAUTION this will earse all the content
-        //val smsDBHelper_debug: SMSDBHelper = SMSDBHelper(this)
-        //smsDBHelper_debug.onUpgrade(smsDBHelper_debug.writableDatabase,2,3)
+//        val smsDBHelper_debug: SMSDBHelper = SMSDBHelper(this)
+//        smsDBHelper_debug.onUpgrade(smsDBHelper_debug.writableDatabase,2,3)
 
         //read the data
         smsDBHelper = SMSDBHelper(this)
@@ -106,8 +106,12 @@ class ListViewActivity : AppCompatActivity() {
 
     override fun onResume() {
         PermissionHandler.checkPersmission(this)
+
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 updateDBEventReceiver, IntentFilter(updateDBIntentName));
+
+        refresh(null)
+
         super.onResume();
     }
 

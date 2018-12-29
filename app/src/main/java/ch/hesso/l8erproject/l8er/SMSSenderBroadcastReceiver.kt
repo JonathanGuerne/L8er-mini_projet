@@ -33,7 +33,6 @@ class SMSSenderBroadcastReceiver : BroadcastReceiver() {
             val text_content = intent.extras.getString("textContent")
             val smsId = intent.extras.getInt("smsId")
             val mustDelete: Boolean = !intent.extras.getBoolean("gotInterval")
-            Log.d("Got_interval", "$mustDelete")
             sendSMS(context, smsId, number, text_content, mustDelete)
         }
     }
