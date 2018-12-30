@@ -54,10 +54,6 @@ class SMSAdapter(private val smsArray: ArrayList<SMSModel>) : RecyclerView.Adapt
         snackbar.show()
     }
 
-    fun updateItem(position: Int){
-        notifyItemChanged(position)
-    }
-
     fun removeAt(position: Int) {
         smsArray.removeAt(position)
         notifyItemRemoved(position)

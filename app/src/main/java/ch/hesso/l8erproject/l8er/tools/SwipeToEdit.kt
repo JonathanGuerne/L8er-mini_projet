@@ -14,9 +14,9 @@ import ch.hesso.l8erproject.l8er.R
 
 abstract class SwipeToEdit(context: Context) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
 
-    private val deleteIcon = ContextCompat.getDrawable(context, R.drawable.ic_edit_white)
-    private val intrinsicWidth = deleteIcon.intrinsicWidth
-    private val intrinsicHeight = deleteIcon.intrinsicHeight
+    private val editIcon = ContextCompat.getDrawable(context, R.drawable.ic_edit_white)
+    private val intrinsicWidth = editIcon.intrinsicWidth
+    private val intrinsicHeight = editIcon.intrinsicHeight
     private val background = ColorDrawable()
     private val backgroundColor = Color.parseColor("#F8BC4D")
     private val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
@@ -40,21 +40,21 @@ abstract class SwipeToEdit(context: Context) : ItemTouchHelper.SimpleCallback(0,
             return
         }
 
-        // Draw the red delete background
+        // Draw the red edit background
         background.color = backgroundColor
         background.setBounds(itemView.left + dX.toInt(), itemView.top, itemView.left, itemView.bottom)
         background.draw(c)
 
-        // Calculate position of delete icon
-        val deleteIconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
-        val deleteIconMargin = (itemHeight - intrinsicHeight) / 2
-        val deleteIconLeft = itemView.left + deleteIconMargin
-        val deleteIconRight = itemView.left + deleteIconMargin + intrinsicWidth
-        val deleteIconBottom = deleteIconTop + intrinsicHeight
+        // Calculate position of edit icon
+        val editIconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
+        val editIconMargin = (itemHeight - intrinsicHeight) / 2
+        val editIconLeft = itemView.left + editIconMargin
+        val editIconRight = itemView.left + editIconMargin + intrinsicWidth
+        val editIconBottom = editIconTop + intrinsicHeight
 
-        // Draw the delete icon
-        deleteIcon.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom)
-        deleteIcon.draw(c)
+        // Draw the edit icon
+        editIcon.setBounds(editIconLeft, editIconTop, editIconRight, editIconBottom)
+        editIcon.draw(c)
 
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }

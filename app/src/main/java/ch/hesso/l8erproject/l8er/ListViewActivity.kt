@@ -16,7 +16,6 @@ import ch.hesso.l8erproject.l8er.adapter.SMSAdapter
 import ch.hesso.l8erproject.l8er.models.SMSModel
 import ch.hesso.l8erproject.l8er.tools.*
 import kotlinx.android.synthetic.main.activity_list_view.*
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 
 
@@ -41,20 +40,20 @@ class ListViewActivity : AppCompatActivity() {
         PermissionHandler.checkPersmission(this)
 
         //use this line to "reboot" the db. CAUTION this will earse all the content
-//        val smsDBHelper_debug: SMSDBHelper = SMSDBHelper(this)
-//        smsDBHelper_debug.onUpgrade(smsDBHelper_debug.writableDatabase,2,3)
+        //val smsDBHelper_debug: SMSDBHelper = SMSDBHelper(this)
+        //smsDBHelper_debug.onUpgrade(smsDBHelper_debug.writableDatabase,2,3)
 
         //read the data
         smsDBHelper = SMSDBHelper(this)
 
         sms_list_view.apply {
 
+            // Personal Adapter that will handle the sms of the list
             adapter_SMS = SMSAdapter(listItems)
-            val list_view = findViewById<RecyclerView>(R.id.sms_list_view)
 
+            // Default values that the RecyclerView need to have to work properly
             layoutManager = LinearLayoutManager(this@ListViewActivity)
             adapter = adapter_SMS
-
             addItemDecoration(DividerItemDecoration(this@ListViewActivity, DividerItemDecoration.VERTICAL))
 
             val swipeHandlerDelete = object : SwipeToDelete(this@ListViewActivity) {
@@ -66,7 +65,7 @@ class ListViewActivity : AppCompatActivity() {
                         adapter_SMS.removeAt(position)
                         deletePlannedSMS(applicationContext, sms.smsid)
                         smsDBHelper.deleteSMS(sms.smsid)
-                        adapter_SMS.restoreItem(sms, list_view, applicationContext, position)
+                        adapter_SMS.restoreItem(sms, sms_list_view, applicationContext, position)
                     }
                 }
             }
